@@ -1,0 +1,124 @@
+basePath: /
+definitions:
+  auth.LoginBody:
+    properties:
+      Email:
+        type: string
+      Password:
+        type: string
+    required:
+    - Email
+    - Password
+    type: object
+  auth.SignupBody:
+    properties:
+      Email:
+        type: string
+      Password:
+        maxLength: 16
+        minLength: 6
+        type: string
+    required:
+    - Email
+    - Password
+    type: object
+  users.ApplyReferralBody:
+    properties:
+      ReferralCode:
+        type: string
+    required:
+    - ReferralCode
+    type: object
+host: 0.0.0.0:8080
+info:
+  contact:
+    email: ashwin@flaq.club
+    name: Ashwin Prasad
+    url: http://www.swagger.io/support
+  description: This is a sample server server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://flaq.club/privacy-policy
+  title: Flaq API
+  version: "2.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Enter Login details
+        in: body
+        name: LoginBody
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginBody'
+      produces:
+      - application/json
+      responses: {}
+      summary: User login
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add Data
+        in: body
+        name: SignupBody
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SignupBody'
+      produces:
+      - application/json
+      responses: {}
+      summary: User signup
+      tags:
+      - Auth
+  /users/apply-referral:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Add Referral Data
+        in: body
+        name: ApplyReferralBody
+        required: true
+        schema:
+          $ref: '#/definitions/users.ApplyReferralBody'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Apply a referral code
+      tags:
+      - Users
+  /users/profile:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get user profile
+      tags:
+      - Users
+schemes:
+- http
+swagger: "2.0"
