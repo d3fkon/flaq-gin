@@ -10,6 +10,13 @@ definitions:
     - Email
     - Password
     type: object
+  auth.RefreshTokenBody:
+    properties:
+      RefreshToken:
+        type: string
+    required:
+    - RefreshToken
+    type: object
   auth.SignupBody:
     properties:
       Email:
@@ -48,7 +55,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Enter Login details
+      - description: Enter login details
         in: body
         name: LoginBody
         required: true
@@ -75,6 +82,23 @@ paths:
       - application/json
       responses: {}
       summary: User signup
+      tags:
+      - Auth
+  /auth/token/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token
+        in: body
+        name: RefreshTokenBody
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RefreshTokenBody'
+      produces:
+      - application/json
+      responses: {}
+      summary: Issue a new Access token
       tags:
       - Auth
   /users/apply-referral:

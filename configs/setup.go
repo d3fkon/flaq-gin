@@ -47,7 +47,6 @@ func GetCollection(collectionName string) *mongo.Collection {
 
 func CreateIndex(collectionName string, field string, unique bool, sparse bool) bool {
 
-	fmt.Print("Creating Indexes")
 	// 1. Lets define the keys for the index we want to create
 	mod := mongo.IndexModel{
 		Keys:    bson.M{field: 1}, // index in ascending order or -1 for descending order

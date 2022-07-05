@@ -39,7 +39,7 @@ const docTemplate = `{
                 "summary": "User login",
                 "parameters": [
                     {
-                        "description": "Enter Login details",
+                        "description": "Enter login details",
                         "name": "LoginBody",
                         "in": "body",
                         "required": true,
@@ -71,6 +71,32 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/auth.SignupBody"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/auth/token/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Issue a new Access token",
+                "parameters": [
+                    {
+                        "description": "Refresh token",
+                        "name": "RefreshTokenBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.RefreshTokenBody"
                         }
                     }
                 ],
@@ -157,6 +183,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.RefreshTokenBody": {
+            "type": "object",
+            "required": [
+                "RefreshToken"
+            ],
+            "properties": {
+                "RefreshToken": {
                     "type": "string"
                 }
             }

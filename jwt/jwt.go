@@ -1,14 +1,9 @@
 package jwt
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"crypto/sha1"
-	"encoding/base64"
 	"errors"
 	"fmt"
-	"io"
+	"os"
 	"time"
 
 	"github.com/d3fkon/gin-flaq/configs"
@@ -34,7 +29,8 @@ func getUserByEmail(email string, user *models.User) error {
 	return nil
 }
 
-func (j Jwt) CreateToken(user models.User) (models.Token, error) {
+// Create access and refresh tokens for a user
+func (j Jwt) CreateToken(user *models.User) (models.Token, error) {
 	var err error
 
 	claims := jwt.MapClaims{}
@@ -58,7 +54,6 @@ func (Jwt) ValidateAccessToken(accessToken string, user *models.User) error {
 		if !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-
 		return []byte(configs.GetEnv(configs.JWT_SECRET)), nil
 	})
 
@@ -78,84 +73,55 @@ func (Jwt) ValidateAccessToken(accessToken string, user *models.User) error {
 	return errors.New("invalid token")
 }
 
-func (Jwt) ValidateRefreshToken(model models.Token, user *models.User) error {
-	sha1 := sha1.New()
-	io.WriteString(sha1, configs.GetEnv(configs.JWT_SECRET))
+func (Jwt) ValidateRefreshToken(refreshToken string, user *models.User) error {
+	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 
-	salt := string(sha1.Sum(nil))[0:16]
-	block, err := aes.NewCipher([]byte(salt))
-	if err != nil {
-		return err
-	}
-
-	gcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return err
-	}
-
-	data, err := base64.URLEncoding.DecodeString(model.RefreshToken)
-	if err != nil {
-		return err
-	}
-
-	nonceSize := gcm.NonceSize()
-	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
-
-	plain, err := gcm.Open(nil, nonce, ciphertext, nil)
-	if err != nil {
-		return err
-	}
-
-	if string(plain) != model.AccessToken {
-		return errors.New("invalid token")
-	}
-
-	claims := jwt.MapClaims{}
-	parser := jwt.Parser{}
-	token, _, err := parser.ParseUnverified(model.AccessToken, claims)
+		return []byte(os.Getenv("SECRET_KEY")), nil
+	})
 
 	if err != nil {
 		return err
 	}
 
 	payload, ok := token.Claims.(jwt.MapClaims)
+	if !(ok && token.Valid) {
+		return errors.New("invalid token")
+	}
+
+	claims := jwt.MapClaims{}
+	parser := jwt.Parser{}
+	token, _, err = parser.ParseUnverified(payload["token"].(string), claims)
+	if err != nil {
+		return err
+	}
+
+	payload, ok = token.Claims.(jwt.MapClaims)
 	if !ok {
 		return errors.New("invalid token")
 	}
 
-	email := payload["Email"].(string)
-
-	if err = getUserByEmail(email, user); err != nil {
-		return errors.New("Cannot find user")
-	}
+	user.Email = payload["Email"].(string)
 
 	return nil
 }
 
 func (Jwt) createRefreshToken(token models.Token) (models.Token, error) {
-	sha1 := sha1.New()
-	io.WriteString(sha1, configs.GetEnv(configs.JWT_SECRET))
+	var err error
 
-	salt := string(sha1.Sum(nil))[0:16]
-	block, err := aes.NewCipher([]byte(salt))
-	if err != nil {
-		fmt.Println(err.Error())
+	claims := jwt.MapClaims{}
+	claims["token"] = token.AccessToken
+	claims["exp"] = time.Now().Add(time.Hour * 24 * 90).Unix()
 
-		return token, err
-	}
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	gcm, err := cipher.NewGCM(block)
+	token.RefreshToken, err = refreshToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
 		return token, err
 	}
-
-	nonce := make([]byte, gcm.NonceSize())
-	_, err = io.ReadFull(rand.Reader, nonce)
-	if err != nil {
-		return token, err
-	}
-
-	token.RefreshToken = base64.URLEncoding.EncodeToString(gcm.Seal(nonce, nonce, []byte(token.AccessToken), nil))
 
 	return token, nil
 }

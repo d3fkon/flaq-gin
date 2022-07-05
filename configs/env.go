@@ -10,13 +10,16 @@ import (
 
 type EnvVar string
 
+// Define all the envs here
 const (
 	MONGOURI   EnvVar = "MONGOURI"
 	JWT_SECRET EnvVar = "JWT_SECRET"
 )
 
+// Declare all the envs here
 var envs = [...]string{
 	string(MONGOURI),
+	string(JWT_SECRET),
 }
 
 func GetEnv(env EnvVar) string {

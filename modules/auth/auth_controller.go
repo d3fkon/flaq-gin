@@ -15,8 +15,9 @@ type Controller struct{}
 func (c Controller) Setup(g *gin.Engine) {
 	router := g.Group("/auth")
 	{
-		router.POST("/signup", c.Signup)
-		router.POST("/login", c.Login)
+		router.POST("/signup", c.signup)
+		router.POST("/login", c.login)
+		router.POST("/token/refresh", c.getAccessToken)
 	}
 }
 
@@ -32,7 +33,7 @@ type SignupBody struct {
 // @Accept   application/json
 // @Param    SignupBody  body  SignupBody  true  "Add Data"
 // @Produce  json
-func (c Controller) Signup(ctx *gin.Context) {
+func (c Controller) signup(ctx *gin.Context) {
 	body := SignupBody{}
 	utils.BindBody(*ctx, &body)
 	// TODO: Validate Password
@@ -49,14 +50,14 @@ type LoginBody struct {
 	Password string `binding:"required" json:"Password"`
 }
 
-// User Login godoc
+// User login godoc
 // @Router   /auth/login [post]
 // @Summary  User login
 // @Tags     Auth
 // @Accept   application/json
-// @Param    LoginBody  body  LoginBody  true  "Enter Login details"
+// @Param    LoginBody  body  LoginBody  true  "Enter login details"
 // @Produce  json
-func (c Controller) Login(ctx *gin.Context) {
+func (c Controller) login(ctx *gin.Context) {
 	body := LoginBody{}
 	utils.BindBody(*ctx, &body)
 	user, isLoggedIn := users.CheckLogin(body.Email, body.Password)
@@ -68,8 +69,37 @@ func (c Controller) Login(ctx *gin.Context) {
 	utils.HandleResponse(ctx, token)
 }
 
+type RefreshTokenBody struct {
+	RefreshToken string `binding:"required" json:"RefreshToken"`
+}
+
+// User refresh-token godoc
+// @Router   /auth/token/refresh [post]
+// @Summary  Issue a new Access token
+// @Tags     Auth
+// @Accept   application/json
+// @Param    RefreshTokenBody body  RefreshTokenBody true  "Refresh token"
+// @Produce  json
+func (c Controller) getAccessToken(ctx *gin.Context) {
+	// Craete the body
+	body := RefreshTokenBody{}
+	user := models.User{}
+	utils.BindBody(*ctx, &body)
+	jwt := jwt.Jwt{}
+
+	// Validate the refresh token
+	if err := (jwt.ValidateRefreshToken(body.RefreshToken, &user)); err != nil {
+		utils.Panic(http.StatusUnauthorized, "Refresh token invalid", nil)
+	}
+
+	token := genTokenAndSetCookie(ctx, &user)
+
+	// If the token is valid, then generate a new set of tokens
+	utils.HandleResponse(ctx, token)
+}
+
 func genTokenAndSetCookie(ctx *gin.Context, user *models.User) models.Token {
-	token, err := jwt.Jwt{}.CreateToken(*user)
+	token, err := jwt.Jwt{}.CreateToken(user)
 	if err != nil {
 		utils.Panic(http.StatusInternalServerError, "Unable to create tokens", err)
 	}
