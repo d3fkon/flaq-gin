@@ -29,6 +29,13 @@ definitions:
     - Email
     - Password
     type: object
+  payments.registerPaymentBody:
+    properties:
+      Amount:
+        type: string
+    required:
+    - Amount
+    type: object
   users.ApplyReferralBody:
     properties:
       ReferralCode:
@@ -101,6 +108,44 @@ paths:
       summary: Issue a new Access token
       tags:
       - Auth
+  /payments:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Register a new UPI Payment
+      tags:
+      - Payments
+  /payments/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Register Payment
+        in: body
+        name: registerPaymentBody
+        required: true
+        schema:
+          $ref: '#/definitions/payments.registerPaymentBody'
+      produces:
+      - application/json
+      responses: {}
+      summary: Register a new UPI Payment
+      tags:
+      - Payments
   /users/apply-referral:
     post:
       consumes:

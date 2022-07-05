@@ -1,13 +1,10 @@
 package utils
 
 import (
-	"errors"
 	"net/http"
 
-	"github.com/d3fkon/gin-flaq/models"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,7 +13,7 @@ type ErrorMsg struct {
 	Message string `json:"Message"`
 }
 
-func getErrorMsg(fe validator.FieldError) string {
+func GetErrorMsg(fe validator.FieldError) string {
 	switch fe.Tag() {
 	case "required":
 		return "This field is required"
@@ -24,25 +21,11 @@ func getErrorMsg(fe validator.FieldError) string {
 		return "Should be less than " + fe.Param()
 	case "gte":
 		return "Should be greater than " + fe.Param()
+	case "numeric":
+		return "Should be a numeric"
 	}
 	// Add other Messages here
 	return "Unknown error"
-}
-
-func BindBody(ctx gin.Context, body interface{}) bool {
-	if err := ctx.ShouldBindJSON(&body); err != nil {
-		var ve validator.ValidationErrors
-		if errors.As(err, &ve) {
-			out := make([]ErrorMsg, len(ve))
-			for i, fe := range ve {
-				out[i] = ErrorMsg{fe.Field(), getErrorMsg(fe)}
-			}
-			Panic(http.StatusBadRequest, "Input fields are invalid", out)
-		}
-		return true
-	}
-
-	return false
 }
 
 // Panic struct
@@ -104,20 +87,6 @@ func HandleRecovery(ctx *gin.Context, recovered interface{}) {
 	})
 }
 
-// A wrapper function to handle all JSON responses
-func HandleResponse(ctx *gin.Context, response interface{}) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"StatusCode": http.StatusOK,
-		"Data":       response,
-	})
-}
-
-// return just an object id
-func ObjId(s string) primitive.ObjectID {
-	o, _ := primitive.ObjectIDFromHex(s)
-	return o
-}
-
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(bytes), err
@@ -126,12 +95,4 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
-}
-
-func ReqUser(ctx *gin.Context) models.User {
-	user, exists := ctx.Get("user")
-	if !exists {
-		Panic(http.StatusUnauthorized, "Not authenticated", nil)
-	}
-	return user.(models.User)
 }

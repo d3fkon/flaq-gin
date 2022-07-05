@@ -5,14 +5,18 @@ import (
 
 	"github.com/d3fkon/gin-flaq/jwt"
 	"github.com/d3fkon/gin-flaq/models"
+	"github.com/d3fkon/gin-flaq/modules"
 	"github.com/d3fkon/gin-flaq/modules/users"
 	"github.com/d3fkon/gin-flaq/utils"
 	"github.com/gin-gonic/gin"
 )
 
-type Controller struct{}
+type Controller struct {
+	M modules.Controller
+}
 
-func (c Controller) Setup(g *gin.Engine) {
+func Setup(g *gin.Engine) {
+	c := Controller{M: modules.Controller{}}
 	router := g.Group("/auth")
 	{
 		router.POST("/signup", c.signup)
@@ -35,14 +39,14 @@ type SignupBody struct {
 // @Produce  json
 func (c Controller) signup(ctx *gin.Context) {
 	body := SignupBody{}
-	utils.BindBody(*ctx, &body)
+	c.M.BindBody(*ctx, &body)
 	// TODO: Validate Password
 	user, _ := users.CreateUser(users.CreateUserBody{
 		Email:    body.Email,
 		Password: body.Password,
 	})
 	token := genTokenAndSetCookie(ctx, &user)
-	utils.HandleResponse(ctx, token)
+	c.M.HandleResponse(ctx, token)
 }
 
 type LoginBody struct {
@@ -59,14 +63,14 @@ type LoginBody struct {
 // @Produce  json
 func (c Controller) login(ctx *gin.Context) {
 	body := LoginBody{}
-	utils.BindBody(*ctx, &body)
+	c.M.BindBody(*ctx, &body)
 	user, isLoggedIn := users.CheckLogin(body.Email, body.Password)
 	if !isLoggedIn {
 		utils.Panic(http.StatusBadRequest, "Invalid Password", nil)
 		return
 	}
 	token := genTokenAndSetCookie(ctx, &user)
-	utils.HandleResponse(ctx, token)
+	c.M.HandleResponse(ctx, token)
 }
 
 type RefreshTokenBody struct {
@@ -78,13 +82,13 @@ type RefreshTokenBody struct {
 // @Summary  Issue a new Access token
 // @Tags     Auth
 // @Accept   application/json
-// @Param    RefreshTokenBody body  RefreshTokenBody true  "Refresh token"
+// @Param    RefreshTokenBody  body  RefreshTokenBody  true  "Refresh token"
 // @Produce  json
 func (c Controller) getAccessToken(ctx *gin.Context) {
 	// Craete the body
 	body := RefreshTokenBody{}
 	user := models.User{}
-	utils.BindBody(*ctx, &body)
+	c.M.BindBody(*ctx, &body)
 	jwt := jwt.Jwt{}
 
 	// Validate the refresh token
@@ -95,7 +99,7 @@ func (c Controller) getAccessToken(ctx *gin.Context) {
 	token := genTokenAndSetCookie(ctx, &user)
 
 	// If the token is valid, then generate a new set of tokens
-	utils.HandleResponse(ctx, token)
+	c.M.HandleResponse(ctx, token)
 }
 
 func genTokenAndSetCookie(ctx *gin.Context, user *models.User) models.Token {

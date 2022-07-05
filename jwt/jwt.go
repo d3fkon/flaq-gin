@@ -8,25 +8,10 @@ import (
 
 	"github.com/d3fkon/gin-flaq/configs"
 	"github.com/d3fkon/gin-flaq/models"
-	"github.com/d3fkon/gin-flaq/utils"
 	"github.com/golang-jwt/jwt"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Jwt struct {
-}
-
-var userModel = configs.GetCollection(models.Users)
-
-// A get user by email redundant helper to prevent circular deps
-func getUserByEmail(email string, user *models.User) error {
-	ctx, cancel := utils.GetContext()
-	defer cancel()
-
-	if err := userModel.FindOne(ctx, bson.M{"Email": email}).Decode(&user); err != nil {
-		return errors.New("Cannot find user")
-	}
-	return nil
 }
 
 // Create access and refresh tokens for a user
@@ -64,7 +49,7 @@ func (Jwt) ValidateAccessToken(accessToken string, user *models.User) error {
 	payload, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
 		email := payload["Email"].(string)
-		if err := getUserByEmail(email, user); err != nil {
+		if err := models.UserModel.GetUserByEmail(email, user); err != nil {
 			return errors.New("Cannot find user")
 		}
 		return nil

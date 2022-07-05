@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/cors"
 
 	"github.com/d3fkon/gin-flaq/modules/auth"
+	"github.com/d3fkon/gin-flaq/modules/payments"
 	"github.com/d3fkon/gin-flaq/modules/users"
 	"github.com/d3fkon/gin-flaq/utils"
 	"github.com/gin-gonic/gin"
@@ -34,8 +35,9 @@ func setupRouter(r *gin.Engine) {
 		c.String(http.StatusOK, "pong")
 	})
 
-	users.Controller{}.Setup(r)
-	auth.Controller{}.Setup(r)
+	auth.Setup(r)
+	users.Setup(r)
+	payments.Setup(r)
 }
 
 // @title           Flaq API

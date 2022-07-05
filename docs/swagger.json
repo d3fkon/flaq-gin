@@ -99,6 +99,63 @@
                 "responses": {}
             }
         },
+        "/payments": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Register a new UPI Payment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/payments/register": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Register a new UPI Payment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Register Payment",
+                        "name": "registerPaymentBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payments.registerPaymentBody"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/users/apply-referral": {
             "post": {
                 "security": [
@@ -208,6 +265,17 @@
                     "type": "string",
                     "maxLength": 16,
                     "minLength": 6
+                }
+            }
+        },
+        "payments.registerPaymentBody": {
+            "type": "object",
+            "required": [
+                "Amount"
+            ],
+            "properties": {
+                "Amount": {
+                    "type": "string"
                 }
             }
         },

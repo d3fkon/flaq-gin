@@ -2,18 +2,21 @@ package users
 
 import (
 	"github.com/d3fkon/gin-flaq/middleware"
-	"github.com/d3fkon/gin-flaq/utils"
+	"github.com/d3fkon/gin-flaq/modules"
 	"github.com/gin-gonic/gin"
 )
-
-type Controller struct{}
 
 type CreateUserBody struct {
 	Email    string `binding:"required,email" json:"Email"`
 	Password string `binding:"required" json:"Password"`
 }
 
-func (c Controller) Setup(g *gin.Engine) {
+type Controller struct {
+	M modules.Controller
+}
+
+func Setup(g *gin.Engine) {
+	c := Controller{M: modules.Controller{}}
 	router := g.Group("/users")
 	{
 		authenticated := router.Group("/")
@@ -39,11 +42,11 @@ type ApplyReferralBody struct {
 // @Param     ApplyReferralBody  body  ApplyReferralBody  true  "Add Referral Data"
 // @Produce   json
 func (c Controller) ApplyReferral(ctx *gin.Context) {
-	user := utils.ReqUser(ctx)
+	user := c.M.ReqUser(ctx)
 	body := ApplyReferralBody{}
-	utils.BindBody(*ctx, &body)
+	c.M.BindBody(*ctx, &body)
 	res := ApplyReferral(user, body.ReferralCode)
-	utils.HandleResponse(ctx, res)
+	c.M.HandleResponse(ctx, res)
 }
 
 // Get User godoc
@@ -55,6 +58,6 @@ func (c Controller) ApplyReferral(ctx *gin.Context) {
 // @Accept    application/json
 // @Produce   json
 func (c Controller) GetProfile(ctx *gin.Context) {
-	user := utils.ReqUser(ctx)
-	utils.HandleResponse(ctx, user)
+	user := c.M.ReqUser(ctx)
+	c.M.HandleResponse(ctx, user)
 }
