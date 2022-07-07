@@ -51,10 +51,8 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 }
 
 func UpdateRefreshToken(user *models.User, refreshToken string) {
-	ctx, cancel := utils.GetContext()
-	defer cancel()
 	user.RefreshToken = refreshToken
-	if err := models.UserModel.I.FindOneAndUpdate(ctx, bson.M{"Email": user.Email}, bson.M{"$set": bson.M{"RefreshToken": refreshToken}}).Decode(&user); err != nil {
+	if err := models.UserModel.FindOneAndUpdate(bson.M{"Email": user.Email}, bson.M{"$set": bson.M{"RefreshToken": refreshToken}}, &user); err != nil {
 		utils.Panic(http.StatusInternalServerError, "Error Updating the Database", err)
 	}
 }
