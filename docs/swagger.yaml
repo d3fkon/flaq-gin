@@ -43,7 +43,6 @@ definitions:
     required:
     - ReferralCode
     type: object
-host: 0.0.0.0:8080
 info:
   contact:
     email: ashwin@flaq.club
