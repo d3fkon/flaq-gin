@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/d3fkon/gin-flaq/configs"
 	"go.mongodb.org/mongo-driver/bson"
@@ -43,6 +44,7 @@ func (c Collection) GetUserByEmail(email string, user *User) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	if err := UserModel.I.FindOne(ctx, bson.M{"Email": email}).Decode(&user); err != nil {
+		fmt.Println(err)
 		return errors.New("Cannot find user")
 	}
 	return nil

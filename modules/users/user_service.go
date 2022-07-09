@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/d3fkon/gin-flaq/models"
@@ -58,7 +57,7 @@ func UpdateFlaqPoints(user *models.User, reward int) {
 	currentPoints := user.FlaqPoints
 	update := bson.M{
 		"$set": bson.M{
-			"FlaqPoints": strconv.Itoa(currentPoints + reward),
+			"FlaqPoints": currentPoints + reward,
 		},
 	}
 	models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, &user)
