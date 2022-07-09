@@ -87,11 +87,11 @@ func ApplyReferral(user models.User, referral string) interface{} {
 	}
 	var x interface{} // Empty dummy interface
 	if err := models.UserModel.FindOneAndUpdate(bson.M{"ReferralCode": referral}, rUpdateData, &x); err != nil {
-		utils.Panic(http.StatusInternalServerError, "Error Updating the Database", err.Error())
+		utils.Panic(http.StatusInternalServerError, "[1] Error Updating the Database", err.Error())
 	}
-	if err := models.UserModel.FindByIdAndUpdate(user.Id.String(), uUpdateData, &user); err != nil {
+	if err := models.UserModel.FindByIdAndUpdate(user.Id.Hex(), uUpdateData, &user); err != nil {
 		fmt.Println(err)
-		utils.Panic(http.StatusInternalServerError, "Error Updating the Database", err.Error())
+		utils.Panic(http.StatusInternalServerError, "[2] Error Updating the Database", err.Error())
 	}
 
 	return "Referral Applied"

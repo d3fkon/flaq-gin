@@ -9,18 +9,18 @@ import (
 )
 
 type User struct {
-	Id               primitive.ObjectID  `bson:"_id"`
-	Email            string              `bind:"email,required" bson:"Email"`
-	FlaqPoints       string              `bson:"FlaqPoints"`
-	RewardMultiplier string              `bson:"RewardMultiplier"`
-	ReferralCode     string              `bson:"ReferralCode"`
-	IsAllowed        bool                `bson:"IsAllowed"`
-	DeviceToken      string              `bson:"DeviceToken" json:"-"`
-	RefreshToken     string              `bson:"RefreshToken"`
-	PasswordHash     string              `bson:"PasswordHash" json:"-"`
-	ReferralData     Referral            `bson:"ReferralData" json:"-"`
-	WalletAddresses  Wallet              `bson:"WalletAddresses"`
-	CreatedAt        primitive.Timestamp `bson:"CreatedAt"`
+	Id               primitive.ObjectID `bson:"_id"`
+	Email            string             `bind:"email,required" bson:"Email"`
+	FlaqPoints       string             `bson:"FlaqPoints"`
+	RewardMultiplier string             `bson:"RewardMultiplier"`
+	ReferralCode     string             `bson:"ReferralCode"`
+	IsAllowed        bool               `bson:"IsAllowed"`
+	DeviceToken      string             `bson:"DeviceToken" json:"-"`
+	RefreshToken     string             `bson:"RefreshToken"`
+	PasswordHash     string             `bson:"PasswordHash" json:"-"`
+	ReferralData     Referral           `bson:"ReferralData" json:"-"`
+	WalletAddresses  Wallet             `bson:"WalletAddresses"`
+	CreatedAt        primitive.DateTime `bson:"CreatedAt"`
 }
 
 type Referral struct {

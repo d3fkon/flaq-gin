@@ -41,10 +41,10 @@ func (c Collection) FindOneById(id string, model interface{}) error {
 	return nil
 }
 
-func (c Collection) FindByIdAndUpdate(id string, update bson.M, updated interface{}) error {
+func (c Collection) FindByIdAndUpdate(idHex string, update bson.M, updated interface{}) error {
 	ctx, cancel := GetContext()
 	defer cancel()
-	if err := c.I.FindOneAndUpdate(ctx, bson.M{"_id": ObjId(id)}, update).Decode(updated); err != nil {
+	if err := c.I.FindOneAndUpdate(ctx, bson.M{"_id": ObjId(idHex)}, update).Decode(updated); err != nil {
 		fmt.Println(err)
 		return errors.New("Cannot update document")
 	}
