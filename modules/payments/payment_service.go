@@ -14,7 +14,7 @@ import (
 
 // Register a new payment for the user
 func RegisterPayment(user models.User, amount string) interface{} {
-	amountInt, _ := strconv.Atoi(amount)
+	amountInt, _ := strconv.ParseFloat(amount, 64)
 	flaqReward := getFlaqForPayment(amountInt)
 	payment := models.Payment{
 		User:       user.Id,
@@ -29,7 +29,7 @@ func RegisterPayment(user models.User, amount string) interface{} {
 	return payment
 }
 
-func getFlaqForPayment(amount int) int {
+func getFlaqForPayment(amount float64) float64 {
 	if amount > 100 {
 		return 100
 	} else {

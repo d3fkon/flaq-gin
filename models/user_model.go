@@ -12,7 +12,7 @@ import (
 type User struct {
 	Id               primitive.ObjectID `bson:"_id"`
 	Email            string             `bind:"email,required" bson:"Email"`
-	FlaqPoints       int                `bson:"FlaqPoints"`
+	FlaqPoints       float64            `bson:"FlaqPoints"`
 	RewardMultiplier int                `bson:"RewardMultiplier"`
 	ReferralCode     string             `bson:"ReferralCode"`
 	IsAllowed        bool               `bson:"IsAllowed"`

@@ -17,11 +17,13 @@ func Setup(g *gin.Engine) {
 	{
 		router.POST("/quiz/template/create", c.createQuizTemplate)
 		router.POST("/create/campaign", c.createQuizForCampaign)
-		router.POST("/campaign")
-		router.POST("/evaluate", c.evaluateQuiz)
 		router.GET("/", c.getAllCampaignsForUser)
+		router.POST("/")
+		router.POST("/evaluate", c.evaluateQuiz)
 	}
 }
+
+func (c Controller) createCampaign(ctx *gin.Context) {}
 
 // Create a quiz template to be used
 func (c Controller) createQuizTemplate(ctx *gin.Context) {}

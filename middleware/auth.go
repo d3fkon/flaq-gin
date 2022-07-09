@@ -14,6 +14,12 @@ const (
 	AuthHeaderKey = "authorization"
 )
 
+func AdminAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+	}
+}
+
 func UserAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accessToken := c.Request.Header.Get(AuthHeaderKey)

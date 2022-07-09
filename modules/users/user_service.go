@@ -53,7 +53,7 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 }
 
 // A helper method to update the user's flaq points balance
-func UpdateFlaqPoints(user *models.User, reward int) {
+func UpdateFlaqPoints(user *models.User, reward float64) {
 	currentPoints := user.FlaqPoints
 	update := bson.M{
 		"$set": bson.M{
