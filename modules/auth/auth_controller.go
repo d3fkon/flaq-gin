@@ -39,7 +39,7 @@ type SignupBody struct {
 // @Produce  json
 func (c Controller) signup(ctx *gin.Context) {
 	body := SignupBody{}
-	c.M.BindBody(*ctx, &body)
+	c.M.BindBody(ctx, &body)
 	// TODO: Validate Password
 	user, _ := users.CreateUser(users.CreateUserBody{
 		Email:    body.Email,
@@ -63,7 +63,7 @@ type LoginBody struct {
 // @Produce  json
 func (c Controller) login(ctx *gin.Context) {
 	body := LoginBody{}
-	c.M.BindBody(*ctx, &body)
+	c.M.BindBody(ctx, &body)
 	user, isLoggedIn := users.CheckLogin(body.Email, body.Password)
 	if !isLoggedIn {
 		utils.Panic(http.StatusBadRequest, "Invalid Password", nil)
@@ -88,7 +88,7 @@ func (c Controller) getAccessToken(ctx *gin.Context) {
 	// Craete the body
 	body := RefreshTokenBody{}
 	user := models.User{}
-	c.M.BindBody(*ctx, &body)
+	c.M.BindBody(ctx, &body)
 	jwt := jwt.Jwt{}
 
 	// Validate the refresh token

@@ -38,9 +38,9 @@ type Wallet struct {
 var referralIndex = configs.CreateIndex(Users, "ReferralCode", true, false)
 var emailIndex = configs.CreateIndex(Users, "Email", true, false)
 
-var UserModel = Collection{I: *configs.GetCollection(Users)}
+var UserModel = Collection[User]{I: *configs.GetCollection(Users)}
 
-func (c Collection) GetUserByEmail(email string, user *User) error {
+func (c Collection[M]) GetUserByEmail(email string, user *User) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	if err := UserModel.I.FindOne(ctx, bson.M{"Email": email}).Decode(&user); err != nil {

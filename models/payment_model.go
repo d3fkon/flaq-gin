@@ -13,4 +13,4 @@ type Payment struct {
 	FlaqReward float64            `bson:"FlaqReward"`
 }
 
-var PaymentModel = Collection{I: *configs.GetCollection(Payments)}
+var PaymentModel = Collection[Payment]{I: *configs.GetCollection(Payments)}

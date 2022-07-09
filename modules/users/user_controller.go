@@ -41,14 +41,12 @@ type ApplyReferralBody struct {
 func (c Controller) ApplyReferral(ctx *gin.Context) {
 	user := c.M.ReqUser(ctx)
 	body := ApplyReferralBody{}
-	c.M.BindBody(*ctx, &body)
+	c.M.BindBody(ctx, &body)
 	res := ApplyReferral(user, body.ReferralCode)
 	c.M.HandleResponse(ctx, res)
 }
 
-// Get User godoc
 // @Router    /users/profile [get]
-// @Security  ApiKeyAuth
 // @param     Authorization  header  string  true  "Authorization"
 // @Summary   Get user profile
 // @Tags      Users

@@ -29,6 +29,64 @@ definitions:
     - Email
     - Password
     type: object
+  models.Campaign:
+    properties:
+      CurrentAirdrop:
+        type: integer
+      Description:
+        type: string
+      Name:
+        type: string
+      Quizzes:
+        items:
+          type: string
+        type: array
+      RequiredFlaq:
+        type: integer
+      TickerName:
+        type: string
+      TotalAirdrop:
+        type: integer
+    required:
+    - CurrentAirdrop
+    - Description
+    - Name
+    - RequiredFlaq
+    - TickerName
+    - TotalAirdrop
+    type: object
+  models.Question:
+    properties:
+      AnswerIndex:
+        type: integer
+      Description:
+        type: string
+      Options:
+        items:
+          type: string
+        type: array
+      Question:
+        type: string
+    required:
+    - AnswerIndex
+    - Description
+    - Options
+    - Question
+    type: object
+  models.QuizTemplate:
+    properties:
+      Questions:
+        items:
+          $ref: '#/definitions/models.Question'
+        type: array
+      Title:
+        type: string
+      id:
+        type: string
+    required:
+    - Questions
+    - Title
+    type: object
   payments.registerPaymentBody:
     properties:
       Amount:
@@ -107,6 +165,36 @@ paths:
       summary: Issue a new Access token
       tags:
       - Auth
+  /campaign:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Campaign Details
+        in: body
+        name: models.Campaign
+        required: true
+        schema:
+          $ref: '#/definitions/models.Campaign'
+      responses: {}
+      summary: Create a campaign
+      tags:
+      - Campaigns
+  /campaign/quiz/template:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Campaign Details
+        in: body
+        name: models.QuizTemplate
+        required: true
+        schema:
+          $ref: '#/definitions/models.QuizTemplate'
+      responses: {}
+      summary: Create a quiz template
+      tags:
+      - Campaigns
   /payments:
     get:
       consumes:
@@ -161,11 +249,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/users.ApplyReferralBody'
-      produces:
-      - application/json
       responses: {}
-      security:
-      - ApiKeyAuth: []
       summary: Apply a referral code
       tags:
       - Users
@@ -182,8 +266,6 @@ paths:
       produces:
       - application/json
       responses: {}
-      security:
-      - ApiKeyAuth: []
       summary: Get user profile
       tags:
       - Users

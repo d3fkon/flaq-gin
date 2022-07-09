@@ -28,7 +28,7 @@ func (c Controller) HandleResponse(ctx *gin.Context, response interface{}) {
 	})
 }
 
-func (c Controller) BindBody(ctx gin.Context, body interface{}) bool {
+func (c Controller) BindBody(ctx *gin.Context, body interface{}) bool {
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		var ve validator.ValidationErrors
 		if errors.As(err, &ve) {

@@ -98,6 +98,52 @@
                 "responses": {}
             }
         },
+        "/campaign": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Create a campaign",
+                "parameters": [
+                    {
+                        "description": "Campaign Details",
+                        "name": "models.Campaign",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Campaign"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/campaign/quiz/template": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Create a quiz template",
+                "parameters": [
+                    {
+                        "description": "Campaign Details",
+                        "name": "models.QuizTemplate",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.QuizTemplate"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/payments": {
             "get": {
                 "consumes": [
@@ -157,15 +203,7 @@
         },
         "/users/apply-referral": {
             "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
@@ -195,11 +233,6 @@
         },
         "/users/profile": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -264,6 +297,90 @@
                     "type": "string",
                     "maxLength": 16,
                     "minLength": 6
+                }
+            }
+        },
+        "models.Campaign": {
+            "type": "object",
+            "required": [
+                "CurrentAirdrop",
+                "Description",
+                "Name",
+                "RequiredFlaq",
+                "TickerName",
+                "TotalAirdrop"
+            ],
+            "properties": {
+                "CurrentAirdrop": {
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Quizzes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "RequiredFlaq": {
+                    "type": "integer"
+                },
+                "TickerName": {
+                    "type": "string"
+                },
+                "TotalAirdrop": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Question": {
+            "type": "object",
+            "required": [
+                "AnswerIndex",
+                "Description",
+                "Options",
+                "Question"
+            ],
+            "properties": {
+                "AnswerIndex": {
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Options": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Question": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.QuizTemplate": {
+            "type": "object",
+            "required": [
+                "Questions",
+                "Title"
+            ],
+            "properties": {
+                "Questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Question"
+                    }
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },

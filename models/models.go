@@ -11,6 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type Models interface {
+	User | Campaign | QuizEntry | QuizTemplate | Payment
+}
+
 const (
 	Users         = "users"
 	Payments      = "payments"
@@ -31,11 +35,11 @@ func ObjId(s string) primitive.ObjectID {
 	return o
 }
 
-type Collection struct {
+type Collection[A Models] struct {
 	I mongo.Collection // Instance of the collection
 }
 
-func (c Collection) FindOneById(id string, model interface{}) error {
+func (c Collection[M]) FindOneById(id string, model interface{}) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	if err := c.I.FindOne(ctx, bson.M{"_id": id}).Decode(model); err != nil {
@@ -44,7 +48,7 @@ func (c Collection) FindOneById(id string, model interface{}) error {
 	return nil
 }
 
-func (c Collection) FindByIdAndUpdate(idHex string, update bson.M, updated interface{}) error {
+func (c Collection[M]) FindByIdAndUpdate(idHex string, update bson.M, updated interface{}) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	if err := c.I.FindOneAndUpdate(ctx, bson.M{"_id": ObjId(idHex)}, update).Decode(updated); err != nil {
@@ -54,7 +58,7 @@ func (c Collection) FindByIdAndUpdate(idHex string, update bson.M, updated inter
 	return nil
 }
 
-func (c Collection) FindOneAndUpdate(find bson.M, update bson.M, updated interface{}) error {
+func (c Collection[M]) FindOneAndUpdate(find bson.M, update bson.M, updated interface{}) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	if err := c.I.FindOneAndUpdate(ctx, find, update).Decode(updated); err != nil {
@@ -64,14 +68,14 @@ func (c Collection) FindOneAndUpdate(find bson.M, update bson.M, updated interfa
 	return nil
 }
 
-func (c Collection) New(document interface{}) error {
+func (c Collection[M]) New(document M) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	_, err := c.I.InsertOne(ctx, document)
 	return err
 }
 
-func (c Collection) FindMany(bson bson.M, elem interface{}) error {
+func (c Collection[M]) FindMany(bson bson.M, elem interface{}) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	cursor, err := c.I.Find(ctx, bson)

@@ -36,7 +36,7 @@ type registerPaymentBody struct {
 func (c Controller) register(ctx *gin.Context) {
 	user := c.M.ReqUser(ctx)
 	body := registerPaymentBody{}
-	c.M.BindBody(*ctx, &body)
+	c.M.BindBody(ctx, &body)
 	res := RegisterPayment(user, body.Amount)
 	c.M.HandleResponse(ctx, res)
 }
