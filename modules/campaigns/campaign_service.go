@@ -5,15 +5,24 @@ import (
 	"time"
 
 	"github.com/d3fkon/gin-flaq/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Create a campaign
 func CreateCampaign(campaign *models.Campaign) any {
 	campaign.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
+	campaign.Quizzes = []primitive.ObjectID{}
 	campaign.Id = primitive.NewObjectID()
 	models.CampaignModel.New(*campaign)
 	return campaign
+}
+
+// Get all campaigns
+func GetAllCampaigns(_ models.User) any {
+	campaigns := []models.Campaign{}
+	models.CampaignModel.FindMany(bson.M{}, &campaigns)
+	return campaigns
 }
 
 // Craete quiz template

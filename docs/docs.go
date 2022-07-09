@@ -126,6 +126,27 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/campaign/": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Get all campaigns",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/campaign/quiz/template": {
             "post": {
                 "consumes": [
@@ -339,6 +360,9 @@ const docTemplate = `{
                 },
                 "TotalAirdrop": {
                     "type": "integer"
+                },
+                "_id": {
+                    "type": "string"
                 }
             }
         },

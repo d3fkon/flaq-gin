@@ -31,6 +31,8 @@ definitions:
     type: object
   models.Campaign:
     properties:
+      _id:
+        type: string
       CurrentAirdrop:
         type: integer
       Description:
@@ -178,6 +180,20 @@ paths:
           $ref: '#/definitions/models.Campaign'
       responses: {}
       summary: Create a campaign
+      tags:
+      - Campaigns
+  /campaign/:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses: {}
+      summary: Get all campaigns
       tags:
       - Campaigns
   /campaign/quiz/template:

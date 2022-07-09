@@ -1,6 +1,7 @@
 package campaigns
 
 import (
+	"github.com/d3fkon/gin-flaq/middleware"
 	"github.com/d3fkon/gin-flaq/models"
 	"github.com/d3fkon/gin-flaq/modules"
 	"github.com/gin-gonic/gin"
@@ -17,8 +18,10 @@ func Setup(g *gin.Engine) {
 		router.POST("/", c.createCampaign)
 		router.POST("/quiz/template", c.createQuizTemplate)
 		router.POST("/quiz/create", c.createQuizForCampaign)
-		router.GET("/", c.getAllCampaignsForUser)
 		router.POST("/evaluate", c.evaluateQuiz)
+		authenticated := router.Group("/")
+		authenticated.Use(middleware.UserAuth())
+		authenticated.GET("/", c.getAllCampaignsForUser)
 	}
 }
 
@@ -31,7 +34,7 @@ func Setup(g *gin.Engine) {
 func (c Controller) createCampaign(ctx *gin.Context) {
 	body := models.Campaign{}
 	c.M.BindBody(ctx, &body)
-	CreateCampaign(body)
+	CreateCampaign(&body)
 	c.M.HandleResponse(ctx, body)
 }
 
@@ -49,7 +52,15 @@ func (c Controller) createQuizTemplate(ctx *gin.Context) {
 }
 
 // Get all campaigns for a user
-func (c Controller) getAllCampaignsForUser(ctx *gin.Context) {}
+// @Router    /campaign/ [get]
+// @Summary   Get all campaigns
+// @param    Authorization  header  string  true  "Authorization"
+// @Tags      Campaigns
+// @Accept    application/json
+func (c Controller) getAllCampaignsForUser(ctx *gin.Context) {
+	user := c.M.ReqUser(ctx)
+	c.M.HandleResponse(ctx, GetAllCampaigns(user))
+}
 
 // Create a quiz for a user, for a campaign
 func (c Controller) createQuizForCampaign(ctx *gin.Context) {}
