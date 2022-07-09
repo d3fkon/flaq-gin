@@ -16,7 +16,7 @@ type User struct {
 	ReferralCode     string             `bson:"ReferralCode"`
 	IsAllowed        bool               `bson:"IsAllowed"`
 	DeviceToken      string             `bson:"DeviceToken" json:"-"`
-	RefreshToken     string             `bson:"RefreshToken"`
+	RefreshToken     string             `bson:"RefreshToken" json:"-"`
 	PasswordHash     string             `bson:"PasswordHash" json:"-"`
 	ReferralData     Referral           `bson:"ReferralData" json:"-"`
 	WalletAddresses  Wallet             `bson:"WalletAddresses"`

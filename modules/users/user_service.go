@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/d3fkon/gin-flaq/models"
 	"github.com/d3fkon/gin-flaq/utils"
@@ -42,12 +44,24 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 			AppliedReferral: "",
 		},
 		WalletAddresses: models.Wallet{},
+		CreatedAt:       primitive.NewDateTimeFromTime(time.Now()),
 	}
 	if err := models.UserModel.New(user); err != nil {
 		utils.Panic(http.StatusInternalServerError, "Cannot create a new user", err)
 	}
 
 	return user, nil
+}
+
+// A helper method to update the user's flaq points balance
+func UpdateFlaqPoints(user *models.User, reward int) {
+	currentPoints, _ := strconv.Atoi(user.FlaqPoints)
+	update := bson.M{
+		"$set": bson.M{
+			"FlaqPoints": strconv.Itoa(currentPoints + reward),
+		},
+	}
+	models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, &user)
 }
 
 func UpdateRefreshToken(user *models.User, refreshToken string) {
