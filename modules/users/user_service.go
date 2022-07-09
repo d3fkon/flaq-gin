@@ -82,6 +82,7 @@ func ApplyReferral(user models.User, referral string) interface{} {
 	}
 	uUpdateData := bson.M{
 		"$set": bson.M{
+			"IsAllowed":                    true,
 			"ReferralData.AppliedReferral": referral,
 		},
 	}
