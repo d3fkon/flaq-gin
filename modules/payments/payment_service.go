@@ -16,13 +16,12 @@ import (
 func RegisterPayment(user models.User, amount string) interface{} {
 	amountInt, _ := strconv.Atoi(amount)
 	flaqReward := getFlaqForPayment(amountInt)
-	flaqRewardStr := strconv.Itoa(flaqReward)
 	payment := models.Payment{
 		User:       user.Id,
 		Amount:     amount,
 		Id:         primitive.NewObjectID(),
 		CreatedAt:  primitive.NewDateTimeFromTime(time.Now()),
-		FlaqReward: flaqRewardStr,
+		FlaqReward: flaqReward,
 	}
 	models.PaymentModel.New(payment)
 	// Update user's flaq balance

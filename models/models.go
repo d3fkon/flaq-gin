@@ -12,8 +12,11 @@ import (
 )
 
 const (
-	Users    = "users"
-	Payments = "payments"
+	Users         = "users"
+	Payments      = "payments"
+	QuizTemplates = "quiz_templates"
+	QuizEntries   = "quiz_entries"
+	Campaigns     = "campaigns"
 )
 
 // Cannot use utils due to circular dependency

@@ -15,8 +15,9 @@ func Setup(g *gin.Engine) {
 	router := g.Group("/campaigns")
 	router.Use(middleware.UserAuth())
 	{
-		router.POST("/create/template", c.createQuizTemplate)
+		router.POST("/quiz/template/create", c.createQuizTemplate)
 		router.POST("/create/campaign", c.createQuizForCampaign)
+		router.POST("/campaign")
 		router.POST("/evaluate", c.evaluateQuiz)
 		router.GET("/", c.getAllCampaignsForUser)
 	}

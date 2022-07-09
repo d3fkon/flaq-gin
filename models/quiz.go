@@ -1,11 +1,13 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"github.com/d3fkon/gin-flaq/configs"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type QuizTemplate struct {
-	Title     string             `bson:"Title"`
-	Questions []Question         `bson:"Questions"`
-	Campaign  primitive.ObjectID `bson:"Campaign"`
+	Title     string     `bson:"Title"`
+	Questions []Question `bson:"Questions"`
 }
 
 type Question struct {
@@ -16,9 +18,12 @@ type Question struct {
 
 type QuizEntry struct {
 	Campaign   primitive.ObjectID  `bson:"Campaign"`
-	Template   QuizTemplate        `bson:"Template"`
+	Template   primitive.ObjectID  `bson:"Template"`
 	User       primitive.ObjectID  `bson:"User"`
 	IsComplete bool                `bson:"IsComplete"`
 	CreatedAt  primitive.Timestamp `bson:"CreatedAt"`
 	UpdateAt   primitive.Timestamp `bson:"UpdatedAt"`
 }
+
+var QuziTemplateModel = Collection{I: *configs.GetCollection(QuizTemplates)}
+var QuizEntryModel = Collection{I: *configs.GetCollection(QuizEntries)}

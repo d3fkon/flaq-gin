@@ -35,8 +35,8 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 		Email:            data.Email,
 		Id:               primitive.NewObjectID(),
 		IsAllowed:        false,
-		RewardMultiplier: "1",
-		FlaqPoints:       "0",
+		RewardMultiplier: 1,
+		FlaqPoints:       0,
 		PasswordHash:     passwordHash,
 		ReferralCode:     utils.GenerateReferral(),
 		ReferralData: models.Referral{
@@ -55,7 +55,7 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 
 // A helper method to update the user's flaq points balance
 func UpdateFlaqPoints(user *models.User, reward int) {
-	currentPoints, _ := strconv.Atoi(user.FlaqPoints)
+	currentPoints := user.FlaqPoints
 	update := bson.M{
 		"$set": bson.M{
 			"FlaqPoints": strconv.Itoa(currentPoints + reward),

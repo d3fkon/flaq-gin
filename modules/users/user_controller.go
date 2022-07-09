@@ -32,15 +32,12 @@ type ApplyReferralBody struct {
 	ReferralCode string `binding:"required" json:"ReferralCode"`
 }
 
-// Create User godoc
 // @Router    /users/apply-referral [post]
-// @Security  ApiKeyAuth
 // @param     Authorization  header  string  true  "Authorization"
 // @Summary   Apply a referral code
 // @Tags      Users
 // @Accept    application/json
 // @Param     ApplyReferralBody  body  ApplyReferralBody  true  "Add Referral Data"
-// @Produce   json
 func (c Controller) ApplyReferral(ctx *gin.Context) {
 	user := c.M.ReqUser(ctx)
 	body := ApplyReferralBody{}

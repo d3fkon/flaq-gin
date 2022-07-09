@@ -11,8 +11,8 @@ import (
 type User struct {
 	Id               primitive.ObjectID `bson:"_id"`
 	Email            string             `bind:"email,required" bson:"Email"`
-	FlaqPoints       string             `bson:"FlaqPoints"`
-	RewardMultiplier string             `bson:"RewardMultiplier"`
+	FlaqPoints       int                `bson:"FlaqPoints"`
+	RewardMultiplier int                `bson:"RewardMultiplier"`
 	ReferralCode     string             `bson:"ReferralCode"`
 	IsAllowed        bool               `bson:"IsAllowed"`
 	DeviceToken      string             `bson:"DeviceToken" json:"-"`

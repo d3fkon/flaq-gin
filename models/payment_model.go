@@ -10,7 +10,7 @@ type Payment struct {
 	User       primitive.ObjectID `bson:"User" binding:"required"`
 	Amount     string             `bson:"Amount" binding:"required"`
 	CreatedAt  primitive.DateTime `bson:"CreatedAt"`
-	FlaqReward string             `bson:"FlaqReward"`
+	FlaqReward int                `bson:"FlaqReward"`
 }
 
 var PaymentModel = Collection{I: *configs.GetCollection(Payments)}
