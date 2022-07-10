@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/d3fkon/gin-flaq/configs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -29,5 +28,5 @@ type QuizEntry struct {
 	UpdateAt   primitive.Timestamp `bson:"UpdatedAt"`
 }
 
-var QuziTemplateModel = Collection[QuizTemplate]{I: *configs.GetCollection(QuizTemplates)}
-var QuizEntryModel = Collection[QuizEntry]{I: *configs.GetCollection(QuizEntries)}
+var QuziTemplateModel = makeModel[QuizTemplate](QuizTemplates)
+var QuizEntryModel = makeModel[QuizEntry](QuizEntries)

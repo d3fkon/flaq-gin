@@ -103,29 +103,6 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/campaign": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Campaigns"
-                ],
-                "summary": "Create a campaign",
-                "parameters": [
-                    {
-                        "description": "Campaign Details",
-                        "name": "models.Campaign",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Campaign"
-                        }
-                    }
-                ],
-                "responses": {}
-            }
-        },
         "/campaign/": {
             "get": {
                 "consumes": [
@@ -147,7 +124,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/campaign/quiz/template": {
+        "/campaign/a": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -155,7 +132,30 @@ const docTemplate = `{
                 "tags": [
                     "Campaigns"
                 ],
-                "summary": "Create a quiz template",
+                "summary": "Create a campaign [FOR ADMIN]",
+                "parameters": [
+                    {
+                        "description": "Campaign Details",
+                        "name": "models.Campaign",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Campaign"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/campaign/a/quiz/template": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Create a quiz template [FOR ADMIN]",
                 "parameters": [
                     {
                         "description": "Campaign Details",
@@ -164,6 +164,36 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.QuizTemplate"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/campaign/participate": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Create a campaign",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Campaign ID",
+                        "name": "campaignParticipationBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/campaigns.campaignParticipationBody"
                         }
                     }
                 ],
@@ -326,6 +356,14 @@ const docTemplate = `{
                 }
             }
         },
+        "campaigns.campaignParticipationBody": {
+            "type": "object",
+            "properties": {
+                "CampaignId": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Campaign": {
             "type": "object",
             "required": [
@@ -337,6 +375,12 @@ const docTemplate = `{
                 "TotalAirdrop"
             ],
             "properties": {
+                "ArticleUrls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "CurrentAirdrop": {
                     "type": "integer"
                 },
@@ -346,20 +390,32 @@ const docTemplate = `{
                 "Name": {
                     "type": "string"
                 },
-                "Quizzes": {
+                "QuizIds": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
+                "Quizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.QuizTemplate"
+                    }
+                },
                 "RequiredFlaq": {
                     "type": "integer"
+                },
+                "TaskType": {
+                    "type": "string"
                 },
                 "TickerName": {
                     "type": "string"
                 },
                 "TotalAirdrop": {
                     "type": "integer"
+                },
+                "YTVideoUrl": {
+                    "type": "string"
                 },
                 "_id": {
                     "type": "string"

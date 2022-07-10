@@ -52,20 +52,25 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 	return user, nil
 }
 
-// A helper method to update the user's flaq points balance
-func UpdateFlaqPoints(user *models.User, reward float64) {
+// A helper method to update the user's flaq points balance + or minus
+func UpdateFlaqPoints(user *models.User, delta float64) {
 	currentPoints := user.FlaqPoints
+	updated := 0
+	// Safe math
+	if currentPoints+delta > 0 {
+		updated = int(currentPoints) + int(delta)
+	}
 	update := bson.M{
 		"$set": bson.M{
-			"FlaqPoints": currentPoints + reward,
+			"FlaqPoints": float64(updated),
 		},
 	}
-	models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, &user)
+	models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, user)
 }
 
 func UpdateRefreshToken(user *models.User, refreshToken string) {
 	user.RefreshToken = refreshToken
-	if err := models.UserModel.FindOneAndUpdate(bson.M{"Email": user.Email}, bson.M{"$set": bson.M{"RefreshToken": refreshToken}}, &user); err != nil {
+	if err := models.UserModel.FindOneAndUpdate(bson.M{"Email": user.Email}, bson.M{"$set": bson.M{"RefreshToken": refreshToken}}, user); err != nil {
 		utils.Panic(http.StatusInternalServerError, "Error Updating the Database", err)
 	}
 }
@@ -99,7 +104,7 @@ func ApplyReferral(user models.User, referral string) interface{} {
 			"ReferralData.AppliedReferral": referral,
 		},
 	}
-	var x interface{} // Empty dummy interface
+	x := models.User{} // Empty dummy interface
 	if err := models.UserModel.FindOneAndUpdate(bson.M{"ReferralCode": referral}, rUpdateData, &x); err != nil {
 		utils.Panic(http.StatusInternalServerError, "[1] Error Updating the Database", err.Error())
 	}

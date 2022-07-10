@@ -12,11 +12,11 @@ import (
 )
 
 type Controller struct {
-	M modules.Controller
+	modules.Controller
 }
 
 func Setup(g *gin.Engine) {
-	c := Controller{M: modules.Controller{}}
+	c := Controller{}
 	router := g.Group("/auth")
 	{
 		router.POST("/signup", c.signup)
@@ -39,14 +39,14 @@ type SignupBody struct {
 // @Produce  json
 func (c Controller) signup(ctx *gin.Context) {
 	body := SignupBody{}
-	c.M.BindBody(ctx, &body)
+	c.BindBody(ctx, &body)
 	// TODO: Validate Password
 	user, _ := users.CreateUser(users.CreateUserBody{
 		Email:    body.Email,
 		Password: body.Password,
 	})
 	token := genTokenAndSetCookie(ctx, &user)
-	c.M.HandleResponse(ctx, token)
+	c.HandleResponse(ctx, token)
 }
 
 type LoginBody struct {
@@ -63,14 +63,14 @@ type LoginBody struct {
 // @Produce  json
 func (c Controller) login(ctx *gin.Context) {
 	body := LoginBody{}
-	c.M.BindBody(ctx, &body)
+	c.BindBody(ctx, &body)
 	user, isLoggedIn := users.CheckLogin(body.Email, body.Password)
 	if !isLoggedIn {
 		utils.Panic(http.StatusBadRequest, "Invalid Password", nil)
 		return
 	}
 	token := genTokenAndSetCookie(ctx, &user)
-	c.M.HandleResponse(ctx, token)
+	c.HandleResponse(ctx, token)
 }
 
 type RefreshTokenBody struct {
@@ -88,7 +88,7 @@ func (c Controller) getAccessToken(ctx *gin.Context) {
 	// Craete the body
 	body := RefreshTokenBody{}
 	user := models.User{}
-	c.M.BindBody(ctx, &body)
+	c.BindBody(ctx, &body)
 	jwt := jwt.Jwt{}
 
 	// Validate the refresh token
@@ -99,7 +99,7 @@ func (c Controller) getAccessToken(ctx *gin.Context) {
 	token := genTokenAndSetCookie(ctx, &user)
 
 	// If the token is valid, then generate a new set of tokens
-	c.M.HandleResponse(ctx, token)
+	c.HandleResponse(ctx, token)
 }
 
 func genTokenAndSetCookie(ctx *gin.Context, user *models.User) models.Token {

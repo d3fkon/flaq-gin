@@ -7,11 +7,11 @@ import (
 )
 
 type Controller struct {
-	M modules.Controller
+	modules.Controller
 }
 
 func Setup(g *gin.Engine) {
-	c := Controller{M: modules.Controller{}}
+	c := Controller{}
 	router := g.Group("/payments")
 	router.Use(middleware.UserAuth())
 	{
@@ -34,11 +34,11 @@ type registerPaymentBody struct {
 // @Param    registerPaymentBody  body  registerPaymentBody  true  "Register Payment"
 // @Produce  json
 func (c Controller) register(ctx *gin.Context) {
-	user := c.M.ReqUser(ctx)
+	user := c.ReqUser(ctx)
 	body := registerPaymentBody{}
-	c.M.BindBody(ctx, &body)
+	c.BindBody(ctx, &body)
 	res := RegisterPayment(user, body.Amount)
-	c.M.HandleResponse(ctx, res)
+	c.HandleResponse(ctx, res)
 }
 
 // Register a payment for a user
@@ -51,6 +51,6 @@ func (c Controller) register(ctx *gin.Context) {
 // @Produce  json
 // Get all payments for a user
 func (c Controller) getAll(ctx *gin.Context) {
-	user := c.M.ReqUser(ctx)
-	c.M.HandleResponse(ctx, GetAllPayments(user))
+	user := c.ReqUser(ctx)
+	c.HandleResponse(ctx, GetAllPayments(user))
 }

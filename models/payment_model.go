@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/d3fkon/gin-flaq/configs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,4 +12,4 @@ type Payment struct {
 	FlaqReward float64            `bson:"FlaqReward"`
 }
 
-var PaymentModel = Collection[Payment]{I: *configs.GetCollection(Payments)}
+var PaymentModel = makeModel[Payment](Payments)

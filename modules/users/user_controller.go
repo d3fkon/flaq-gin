@@ -12,11 +12,11 @@ type CreateUserBody struct {
 }
 
 type Controller struct {
-	M modules.Controller
+	modules.Controller
 }
 
 func Setup(g *gin.Engine) {
-	c := Controller{M: modules.Controller{}}
+	c := Controller{}
 	router := g.Group("/users")
 	{
 		authenticated := router.Group("/")
@@ -39,11 +39,11 @@ type ApplyReferralBody struct {
 // @Accept    application/json
 // @Param     ApplyReferralBody  body  ApplyReferralBody  true  "Add Referral Data"
 func (c Controller) ApplyReferral(ctx *gin.Context) {
-	user := c.M.ReqUser(ctx)
+	user := c.ReqUser(ctx)
 	body := ApplyReferralBody{}
-	c.M.BindBody(ctx, &body)
+	c.BindBody(ctx, &body)
 	res := ApplyReferral(user, body.ReferralCode)
-	c.M.HandleResponse(ctx, res)
+	c.HandleResponse(ctx, res)
 }
 
 // @Router    /users/profile [get]
@@ -53,6 +53,6 @@ func (c Controller) ApplyReferral(ctx *gin.Context) {
 // @Accept    application/json
 // @Produce   json
 func (c Controller) GetProfile(ctx *gin.Context) {
-	user := c.M.ReqUser(ctx)
-	c.M.HandleResponse(ctx, user)
+	user := c.ReqUser(ctx)
+	c.HandleResponse(ctx, user)
 }

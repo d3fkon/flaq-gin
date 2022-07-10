@@ -38,7 +38,11 @@ type Wallet struct {
 var referralIndex = configs.CreateIndex(Users, "ReferralCode", true, false)
 var emailIndex = configs.CreateIndex(Users, "Email", true, false)
 
-var UserModel = Collection[User]{I: *configs.GetCollection(Users)}
+var UserModel = makeModel[User](Users)
+
+type UserI interface {
+	User | primitive.ObjectID
+}
 
 func (c Collection[M]) GetUserByEmail(email string, user *User) error {
 	ctx, cancel := GetContext()

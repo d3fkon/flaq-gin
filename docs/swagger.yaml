@@ -29,26 +29,43 @@ definitions:
     - Email
     - Password
     type: object
+  campaigns.campaignParticipationBody:
+    properties:
+      CampaignId:
+        type: string
+    type: object
   models.Campaign:
     properties:
       _id:
         type: string
+      ArticleUrls:
+        items:
+          type: string
+        type: array
       CurrentAirdrop:
         type: integer
       Description:
         type: string
       Name:
         type: string
-      Quizzes:
+      QuizIds:
         items:
           type: string
         type: array
+      Quizzes:
+        items:
+          $ref: '#/definitions/models.QuizTemplate'
+        type: array
       RequiredFlaq:
         type: integer
+      TaskType:
+        type: string
       TickerName:
         type: string
       TotalAirdrop:
         type: integer
+      YTVideoUrl:
+        type: string
     required:
     - CurrentAirdrop
     - Description
@@ -167,21 +184,6 @@ paths:
       summary: Issue a new Access token
       tags:
       - Auth
-  /campaign:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Campaign Details
-        in: body
-        name: models.Campaign
-        required: true
-        schema:
-          $ref: '#/definitions/models.Campaign'
-      responses: {}
-      summary: Create a campaign
-      tags:
-      - Campaigns
   /campaign/:
     get:
       consumes:
@@ -196,7 +198,22 @@ paths:
       summary: Get all campaigns
       tags:
       - Campaigns
-  /campaign/quiz/template:
+  /campaign/a:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Campaign Details
+        in: body
+        name: models.Campaign
+        required: true
+        schema:
+          $ref: '#/definitions/models.Campaign'
+      responses: {}
+      summary: Create a campaign [FOR ADMIN]
+      tags:
+      - Campaigns
+  /campaign/a/quiz/template:
     post:
       consumes:
       - application/json
@@ -208,7 +225,27 @@ paths:
         schema:
           $ref: '#/definitions/models.QuizTemplate'
       responses: {}
-      summary: Create a quiz template
+      summary: Create a quiz template [FOR ADMIN]
+      tags:
+      - Campaigns
+  /campaign/participate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Campaign ID
+        in: body
+        name: campaignParticipationBody
+        required: true
+        schema:
+          $ref: '#/definitions/campaigns.campaignParticipationBody'
+      responses: {}
+      summary: Create a campaign
       tags:
       - Campaigns
   /payments:
