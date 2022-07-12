@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/d3fkon/gin-flaq/configs"
@@ -24,10 +23,6 @@ const (
 )
 
 type Models interface {
-}
-
-type Query interface {
-	bson.D | bson.M
 }
 
 // Cannot use utils due to circular dependency
@@ -127,18 +122,18 @@ func (c Collection[M]) FindManyPopulate(matchQuery bson.D, populate Populate, el
 		Value: populate.As,
 	}}}}
 
-	unwind := bson.D{{
-		Key: "$unwind",
-		Value: bson.D{{
-			Key:   "path",
-			Value: strings.Join([]string{"$", populate.As}, ""),
-		}, {
-			Key:   "preserveNullAndEmptyArrays",
-			Value: false,
-		}},
-	}}
+	// unwind := bson.D{{
+	// 	Key: "$unwind",
+	// 	Value: bson.D{{
+	// 		Key:   "path",
+	// 		Value: strings.Join([]string{"$", populate.As}, ""),
+	// 	}, {
+	// 		Key:   "preserveNullAndEmptyArrays",
+	// 		Value: false,
+	// 	}},
+	// }}
 
-	cursor, err := c.I.Aggregate(ctx, mongo.Pipeline{match, lookup, unwind})
+	cursor, err := c.I.Aggregate(ctx, mongo.Pipeline{match, lookup})
 	if err != nil {
 		return err
 	}

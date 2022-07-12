@@ -15,8 +15,8 @@ var TaskTypes taskTypes = taskTypes{
 
 type Campaign struct {
 	Id             primitive.ObjectID   `bson:"_id" json:"Id"`
-	QuizIds        []primitive.ObjectID `bson:"Quizzes" json:"QuizIds"`
-	Quizzes        *[]QuizTemplate      `bson:"-" json:"Quizzes"`
+	QuizIds        []primitive.ObjectID `bson:"QuizIds" json:"QuizIds"`
+	Quizzes        *[]QuizTemplate      `bson:"Quizzes" json:"Quizzes"`
 	Name           string               `bson:"Name" json:"Name" binding:"required"`
 	Description    string               `bson:"Description" json:"Description" binding:"required"`
 	RequiredFlaq   int                  `bson:"RequiredFlaq" json:"RequiredFlaq" binding:"required"`

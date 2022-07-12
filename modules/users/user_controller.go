@@ -32,12 +32,12 @@ type ApplyReferralBody struct {
 	ReferralCode string `binding:"required" json:"ReferralCode"`
 }
 
-// @Router    /users/apply-referral [post]
-// @param     Authorization  header  string  true  "Authorization"
-// @Summary   Apply a referral code
-// @Tags      Users
-// @Accept    application/json
-// @Param     ApplyReferralBody  body  ApplyReferralBody  true  "Add Referral Data"
+// @Router   /users/apply-referral [post]
+// @param    Authorization  header  string  true  "Authorization"
+// @Summary  Apply a referral code
+// @Tags     Users
+// @Accept   application/json
+// @Param    ApplyReferralBody  body  ApplyReferralBody  true  "Add Referral Data"
 func (c Controller) ApplyReferral(ctx *gin.Context) {
 	user := c.ReqUser(ctx)
 	body := ApplyReferralBody{}
@@ -46,12 +46,12 @@ func (c Controller) ApplyReferral(ctx *gin.Context) {
 	c.HandleResponse(ctx, res)
 }
 
-// @Router    /users/profile [get]
-// @param     Authorization  header  string  true  "Authorization"
-// @Summary   Get user profile
-// @Tags      Users
-// @Accept    application/json
-// @Produce   json
+// @Router   /users/profile [get]
+// @param    Authorization  header  string  true  "Authorization"
+// @Summary  Get user profile
+// @Tags     Users
+// @Accept   application/json
+// @Produce  json
 func (c Controller) GetProfile(ctx *gin.Context) {
 	user := c.ReqUser(ctx)
 	c.HandleResponse(ctx, user)

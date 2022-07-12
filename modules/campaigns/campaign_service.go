@@ -12,7 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Create a campaign
+// Create a campaign for a from an admin
+// Creates a new campaign in the database
 func CreateCampaign(campaign *models.Campaign) any {
 	campaign.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
 	campaign.QuizIds = []primitive.ObjectID{}
@@ -23,6 +24,7 @@ func CreateCampaign(campaign *models.Campaign) any {
 }
 
 // Get all campaigns
+// Get all campaigns including the user's participating users
 func GetAllCampaigns(_ models.User) any {
 	campaigns := []models.Campaign{}
 	models.CampaignModel.FindMany(bson.M{}, &campaigns)
@@ -38,8 +40,30 @@ func CreateQuizTemplate(quizTemplate *models.QuizTemplate) any {
 	return quizTemplate
 }
 
-// Get all campaign participations for user
-func GetCampaignParticipationForUser(user models.User) any {
+// AddQuizToCampaign is a helper service method which adds a given QuizTemplate with an ID into a Campaign
+// This performs a very simple PUSH operation and doesn't expect anything more than the campaign ID and the
+// Quiz Template ID
+func AddQuizToCampaign(campaignId string, quizTemplateId string) models.Campaign {
+	query := bson.M{
+		"_id": models.ObjId(campaignId),
+	}
+
+	update := bson.M{
+		"$push": bson.M{
+			"QuizIds": models.ObjId(quizTemplateId),
+		},
+	}
+	updated := models.Campaign{}
+	if err := models.CampaignModel.FindOneAndUpdate(query, update, &updated); err != nil {
+		utils.Panic(401, "Campagin not found", err)
+	}
+	return updated
+}
+
+// GetCampaignParticipationForUser will return a Map, which has the user's participations
+// The map contains a) All campaigns, b) Campaigns participated by the given user
+// The service panics if there is an error finding campaign participations or while populating it
+func GetCampaignParticipationForUser(user models.User) gin.H {
 	query := bson.D{{
 		Key: "UserId", Value: models.ObjId(user.Id.Hex()),
 	}}
@@ -63,7 +87,10 @@ func GetCampaignParticipationForUser(user models.User) any {
 }
 
 // Record participation in a campaign
-func ParticipateInCampaign(campaignId string, user models.User) any {
+// Check for the required flaq points to participate in a campaign
+// Deduct the right amount of Flaq from the user for the same and enrol the user in the campaign
+// TODO: Check for the campaign capacity
+func ParticipateInCampaign(campaignId string, user models.User) models.CampaignParticipation {
 	campaign := models.Campaign{}
 	if err := models.CampaignModel.FindOneById(campaignId, &campaign); err != nil {
 		utils.Panic(404, "Cannot find campaign", err)
@@ -82,4 +109,31 @@ func ParticipateInCampaign(campaignId string, user models.User) any {
 	models.CampaignParticipationModel.New(participation)
 	users.UpdateFlaqPoints(&user, -float64(requiredFlaq))
 	return participation
+}
+
+// GetQuizTemplateForCampaign returns the most recent quiz template for a given campaign
+// The campaign should be a legitimate campaign with quizzes
+// The service will panic if the campaign does not exist or if the campaign does not have quizzes
+func GetQuizTemplateForCampaign(campaignId string) *models.QuizTemplate {
+	query := bson.D{{
+		Key:   "_id",
+		Value: models.ObjId(campaignId),
+	}}
+
+	populate := models.Populate{
+		As:           "Quizzes",
+		ForeignModel: models.QuizTemplates,
+		LocalField:   "QuizIds",
+	}
+
+	campaigns := []models.Campaign{}
+	if err := models.CampaignModel.FindManyPopulate(query, populate, &campaigns); err != nil {
+		utils.Panic(401, "[1] Campaign Not Found", err)
+	}
+	if len(campaigns) > 0 && len(*campaigns[0].Quizzes) > 0 {
+		quizzes := campaigns[0].Quizzes
+		return &(*quizzes)[0]
+	}
+	utils.Panic(401, "[2] Campaign Not Found", nil)
+	return nil
 }

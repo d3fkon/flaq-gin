@@ -130,9 +130,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Campaigns"
+                    "Campaign Admin"
                 ],
-                "summary": "Create a campaign [FOR ADMIN]",
+                "summary": "Create a campaign",
                 "parameters": [
                     {
                         "description": "Campaign Details",
@@ -147,15 +147,38 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/campaign/a/quiz/add": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaign Admin"
+                ],
+                "summary": "Create a quiz template [FOR ADMIN]",
+                "parameters": [
+                    {
+                        "description": "Quiz and Campaign Details",
+                        "name": "addQuizToCampaignBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/campaigns.addQuizToCampaignBody"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/campaign/a/quiz/template": {
             "post": {
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Campaigns"
+                    "Campaign Admin"
                 ],
-                "summary": "Create a quiz template [FOR ADMIN]",
+                "summary": "Create a quiz template",
                 "parameters": [
                     {
                         "description": "Campaign Details",
@@ -195,6 +218,34 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/campaigns.campaignParticipationBody"
                         }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/campaign/{id}/quiz": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Get all campaigns",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Campaign ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -356,6 +407,17 @@ const docTemplate = `{
                 }
             }
         },
+        "campaigns.addQuizToCampaignBody": {
+            "type": "object",
+            "properties": {
+                "CampaignId": {
+                    "type": "string"
+                },
+                "QuizTemplateId": {
+                    "type": "string"
+                }
+            }
+        },
         "campaigns.campaignParticipationBody": {
             "type": "object",
             "properties": {
@@ -387,6 +449,9 @@ const docTemplate = `{
                 "Description": {
                     "type": "string"
                 },
+                "Id": {
+                    "type": "string"
+                },
                 "Name": {
                     "type": "string"
                 },
@@ -415,9 +480,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "YTVideoUrl": {
-                    "type": "string"
-                },
-                "_id": {
                     "type": "string"
                 }
             }

@@ -29,6 +29,13 @@ definitions:
     - Email
     - Password
     type: object
+  campaigns.addQuizToCampaignBody:
+    properties:
+      CampaignId:
+        type: string
+      QuizTemplateId:
+        type: string
+    type: object
   campaigns.campaignParticipationBody:
     properties:
       CampaignId:
@@ -36,8 +43,6 @@ definitions:
     type: object
   models.Campaign:
     properties:
-      _id:
-        type: string
       ArticleUrls:
         items:
           type: string
@@ -45,6 +50,8 @@ definitions:
       CurrentAirdrop:
         type: integer
       Description:
+        type: string
+      Id:
         type: string
       Name:
         type: string
@@ -198,6 +205,25 @@ paths:
       summary: Get all campaigns
       tags:
       - Campaigns
+  /campaign/{id}/quiz:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Campaign ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses: {}
+      summary: Get all campaigns
+      tags:
+      - Campaigns
   /campaign/a:
     post:
       consumes:
@@ -210,9 +236,24 @@ paths:
         schema:
           $ref: '#/definitions/models.Campaign'
       responses: {}
-      summary: Create a campaign [FOR ADMIN]
+      summary: Create a campaign
       tags:
-      - Campaigns
+      - Campaign Admin
+  /campaign/a/quiz/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Quiz and Campaign Details
+        in: body
+        name: addQuizToCampaignBody
+        required: true
+        schema:
+          $ref: '#/definitions/campaigns.addQuizToCampaignBody'
+      responses: {}
+      summary: Create a quiz template [FOR ADMIN]
+      tags:
+      - Campaign Admin
   /campaign/a/quiz/template:
     post:
       consumes:
@@ -225,9 +266,9 @@ paths:
         schema:
           $ref: '#/definitions/models.QuizTemplate'
       responses: {}
-      summary: Create a quiz template [FOR ADMIN]
+      summary: Create a quiz template
       tags:
-      - Campaigns
+      - Campaign Admin
   /campaign/participate:
     post:
       consumes:
