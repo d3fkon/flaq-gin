@@ -223,6 +223,36 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/campaign/quiz/evaluate": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Evaluate a quiz submission",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Quiz and Campaign Details",
+                        "name": "quizParticipationBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/campaigns.quizParticipationBody"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/campaign/{id}/quiz": {
             "get": {
                 "consumes": [
@@ -422,6 +452,28 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "CampaignId": {
+                    "type": "string"
+                }
+            }
+        },
+        "campaigns.quizParticipationBody": {
+            "type": "object",
+            "required": [
+                "Answers",
+                "CampaignParticipationId",
+                "QuizTemplateId"
+            ],
+            "properties": {
+                "Answers": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "CampaignParticipationId": {
+                    "type": "string"
+                },
+                "QuizTemplateId": {
                     "type": "string"
                 }
             }

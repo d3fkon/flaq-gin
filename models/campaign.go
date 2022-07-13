@@ -29,11 +29,15 @@ type Campaign struct {
 	YTVideoUrl     string               `bson:"YTVideoUrl" json:"YTVideoUrl"`
 }
 
-type CampaignI interface{ Campaign }
+type CampaignWrapper struct {
+	Id   primitive.ObjectID `bson:"Id"`
+	Data *Campaign          `bson:"Data"`
+}
 
 var CampaignModel = Collection[Campaign]{I: *configs.GetCollection(Campaigns)}
 
 type CampaignParticipation struct {
+	Id         primitive.ObjectID `bson:"_id" json:"Id"`
 	CampaignId primitive.ObjectID `bson:"CampaignId" json:"CampaignId"`
 	Campaign   *Campaign          `bson:"Campaign" json:"Campaign"`
 	UserId     primitive.ObjectID `bson:"UserId" json:"UserId"`

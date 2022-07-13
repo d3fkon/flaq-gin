@@ -37,6 +37,10 @@ func ObjId(s string) primitive.ObjectID {
 	return o
 }
 
+func Now() primitive.DateTime {
+	return primitive.NewDateTimeFromTime(time.Now())
+}
+
 type Collection[A Models] struct {
 	I    mongo.Collection // Instance of the collection
 	name string

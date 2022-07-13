@@ -17,7 +17,6 @@ func Setup(g *gin.Engine) {
 	{
 		router.POST("/a/", c.createCampaign)
 		router.POST("/a/quiz/template", c.createQuizTemplate)
-		router.POST("/a/quiz/create", c.createQuizForCampaign)
 		router.POST("/a/quiz/add", c.addQuizToCampaign)
 		authenticated := router.Group("/")
 		authenticated.Use(middleware.UserAuth())
@@ -28,7 +27,7 @@ func Setup(g *gin.Engine) {
 			authenticated.GET("/:campaignId/quiz/", c.getQuizTemplateForCampaign)
 			// Get all participants
 			authenticated.POST("/participate", c.participate)
-			authenticated.POST("/evaluate", c.evaluateQuiz)
+			authenticated.POST("/quiz/evaluate", c.evaluateQuiz)
 		}
 	}
 }
@@ -104,11 +103,29 @@ func (c Controller) getQuizTemplateForCampaign(ctx *gin.Context) {
 	c.HandleResponse(ctx, res)
 }
 
-// Create a quiz for a user, for a campaign
-func (c Controller) createQuizForCampaign(ctx *gin.Context) {}
+// ----------------------------------------------
+type quizParticipationBody struct {
+	CampaignParticipationId string `json:"CampaignParticipationId" binding:"required"`
+	QuizTemplateId          string `json:"QuizTemplateId" binding:"required"`
+	Answers                 []int  `json:"Answers" binding:"required"`
+}
 
-// Evaluate a given quiz
-func (c Controller) evaluateQuiz(ctx *gin.Context) {}
+// Evaluate a quiz
+// @Router   /campaign/quiz/evaluate [post]
+// @Summary  Evaluate a quiz submission
+// @param    Authorization  header  string  true  "Authorization"
+// @Tags     Campaigns
+// @Accept   application/json
+// @Param    quizParticipationBody   body  quizParticipationBody  true  "Quiz and Campaign Details"
+func (c Controller) evaluateQuiz(ctx *gin.Context) {
+	body := quizParticipationBody{}
+	user := c.ReqUser(ctx)
+	c.BindBody(ctx, &body)
+	res := EvaluateQuiz(user.Id.Hex(), body.CampaignParticipationId, body.QuizTemplateId, body.Answers)
+	c.HandleResponse(ctx, res)
+}
+
+// -----------------------------------------------
 
 type campaignParticipationBody struct {
 	CampaignId string `json:"CampaignId"`

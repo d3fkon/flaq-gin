@@ -18,15 +18,21 @@ type Question struct {
 	AnswerIndex int      `bson:"AnswerIndex" json:"AnswerIndex" binding:"required"`
 }
 
-type QuizEntry struct {
-	Id         primitive.ObjectID  `bson:"_id"`
-	Campaign   primitive.ObjectID  `bson:"Campaign"`
-	Template   primitive.ObjectID  `bson:"Template"`
-	User       primitive.ObjectID  `bson:"User"`
-	IsComplete bool                `bson:"IsComplete"`
-	CreatedAt  primitive.Timestamp `bson:"CreatedAt"`
-	UpdateAt   primitive.Timestamp `bson:"UpdatedAt"`
+type QuizWrapper struct {
+	Id   primitive.ObjectID `bson:"Id" json:"Id"`
+	Data *QuizTemplate      `bson:"Data" json:"Data"`
 }
 
-var QuziTemplateModel = makeModel[QuizTemplate](QuizTemplates)
+type QuizEntry struct {
+	Id            primitive.ObjectID `bson:"_id"`
+	Campaign      CampaignWrapper    `bson:"Campaign"`
+	Quiz          QuizWrapper        `bson:"Quiz"`
+	User          UserWrapper        `bson:"User"`
+	IsPassing     bool               `bson:"IsPassing"`
+	QuestionCount int                `bson:"QuestionCount"`
+	CorrectCount  int                `bson:"CorrectCount"`
+	CreatedAt     primitive.DateTime `bson:"CreatedAt"`
+}
+
+var QuizTemplateModel = makeModel[QuizTemplate](QuizTemplates)
 var QuizEntryModel = makeModel[QuizEntry](QuizEntries)

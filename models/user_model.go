@@ -40,8 +40,9 @@ var emailIndex = configs.CreateIndex(Users, "Email", true, false)
 
 var UserModel = makeModel[User](Users)
 
-type UserI interface {
-	User | primitive.ObjectID
+type UserWrapper struct {
+	Id   primitive.ObjectID `bson:"Id" json:"Id"`
+	Data *User              `bson:"Data" json:"Data"`
 }
 
 func (c Collection[M]) GetUserByEmail(email string, user *User) error {

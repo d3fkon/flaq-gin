@@ -41,6 +41,21 @@ definitions:
       CampaignId:
         type: string
     type: object
+  campaigns.quizParticipationBody:
+    properties:
+      Answers:
+        items:
+          type: integer
+        type: array
+      CampaignParticipationId:
+        type: string
+      QuizTemplateId:
+        type: string
+    required:
+    - Answers
+    - CampaignParticipationId
+    - QuizTemplateId
+    type: object
   models.Campaign:
     properties:
       ArticleUrls:
@@ -287,6 +302,26 @@ paths:
           $ref: '#/definitions/campaigns.campaignParticipationBody'
       responses: {}
       summary: Create a campaign
+      tags:
+      - Campaigns
+  /campaign/quiz/evaluate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Quiz and Campaign Details
+        in: body
+        name: quizParticipationBody
+        required: true
+        schema:
+          $ref: '#/definitions/campaigns.quizParticipationBody'
+      responses: {}
+      summary: Evaluate a quiz submission
       tags:
       - Campaigns
   /payments:

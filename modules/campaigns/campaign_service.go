@@ -36,7 +36,7 @@ func CreateQuizTemplate(quizTemplate *models.QuizTemplate) any {
 	quizTemplate.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
 	quizTemplate.Id = primitive.NewObjectID()
 	fmt.Println(quizTemplate.Questions)
-	models.QuziTemplateModel.New(*quizTemplate)
+	models.QuizTemplateModel.New(*quizTemplate)
 	return quizTemplate
 }
 
@@ -99,16 +99,16 @@ func ParticipateInCampaign(campaignId string, user models.User) models.CampaignP
 	if user.FlaqPoints < float64(requiredFlaq) {
 		utils.Panic(401, "Low Flaq Point Balance", nil)
 	}
-	participation := models.CampaignParticipation{
+	campaignParticipation := models.CampaignParticipation{
 		CreatedAt:  primitive.NewDateTimeFromTime(time.Now()),
 		UserId:     models.ObjId(user.Id.Hex()),
 		CampaignId: models.ObjId(campaign.Id.Hex()),
 		IsComplete: false,
 		FlaqSpent:  campaign.RequiredFlaq,
 	}
-	models.CampaignParticipationModel.New(participation)
+	models.CampaignParticipationModel.New(campaignParticipation)
 	users.UpdateFlaqPoints(&user, -float64(requiredFlaq))
-	return participation
+	return campaignParticipation
 }
 
 // GetQuizTemplateForCampaign returns the most recent quiz template for a given campaign
@@ -136,4 +136,65 @@ func GetQuizTemplateForCampaign(campaignId string) *models.QuizTemplate {
 	}
 	utils.Panic(401, "[2] Campaign Not Found", nil)
 	return nil
+}
+
+// Check if the Campaign ID corelates to a Campaign
+// Check if the QuizTemplateId corelates to a Quiz Template
+// Panic if any of the above two fail
+// Evaluate the answers by checking if the answer indexes stored and the answers match
+// Create a QuizEntry with the above created data
+func EvaluateQuiz(userId, campaignParticipationId, quizTemplateId string, answers []int) models.QuizEntry {
+	campaign := models.CampaignParticipation{}
+	quizTemplate := models.QuizTemplate{}
+	err1 := models.CampaignParticipationModel.FindOneById(campaignParticipationId, &campaign)
+	err2 := models.QuizTemplateModel.FindOneById(quizTemplateId, &quizTemplate)
+	if err1 != nil || err2 != nil {
+		utils.Panic(401, "Error evaluating participation", err1)
+	}
+	if len(answers) != len(quizTemplate.Questions) {
+		error := fmt.Sprintf("Invalid answers array length. Expected %d got %d", len(quizTemplate.Questions), len(answers))
+		utils.Panic(401, error, nil)
+	}
+	// Evaluate the quiz by checking if the indexes of answers and the data match
+	score := 0
+	for i, question := range quizTemplate.Questions {
+		answer := answers[i]
+		if answer == question.AnswerIndex {
+			score++
+		}
+	}
+	isQuizPassing := score == len(quizTemplate.Questions)
+	// Check the number of question in the quiz
+	// Check the number of correct answers in the quiz
+	participation := models.QuizEntry{
+		IsPassing:     isQuizPassing,
+		CreatedAt:     models.Now(),
+		Id:            primitive.NewObjectID(),
+		QuestionCount: len(quizTemplate.Questions),
+		CorrectCount:  score,
+	}
+	participation.Quiz.Id = models.ObjId(quizTemplateId)
+	participation.Campaign.Id = models.ObjId(campaignParticipationId)
+	participation.User.Id = models.ObjId(userId)
+	if err := models.QuizEntryModel.New(participation); err != nil {
+		utils.Panic(401, "Error creating quiz", err)
+	}
+
+	// If the task type was quiz and the quiz is answered successfully
+	// Trigger a campaign completion event
+	// Currently only handles task types which are QUIZ. Any other task type should be handled here
+	if isQuizPassing {
+		query := bson.M{
+			"_id": models.ObjId(campaign.Id.Hex()),
+		}
+		update := bson.M{
+			"$set": bson.M{
+				"IsComplete": true,
+			},
+		}
+		updated := models.CampaignParticipation{}
+		models.CampaignParticipationModel.FindOneAndUpdate(query, update, &updated)
+	}
+
+	return participation
 }
