@@ -11,6 +11,7 @@ import (
 	"github.com/d3fkon/gin-flaq/modules/auth"
 	"github.com/d3fkon/gin-flaq/modules/campaigns"
 	"github.com/d3fkon/gin-flaq/modules/payments"
+	"github.com/d3fkon/gin-flaq/modules/rewards"
 	"github.com/d3fkon/gin-flaq/modules/users"
 	"github.com/d3fkon/gin-flaq/utils"
 	"github.com/gin-gonic/gin"
@@ -40,6 +41,7 @@ func setupRouter(r *gin.Engine) {
 	users.Setup(r)
 	payments.Setup(r)
 	campaigns.Setup(r)
+	rewards.Setup(r)
 }
 
 // @title           Flaq API

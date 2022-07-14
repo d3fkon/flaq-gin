@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/d3fkon/gin-flaq/models"
+	"github.com/d3fkon/gin-flaq/modules/rewards"
 	"github.com/d3fkon/gin-flaq/modules/users"
 	"github.com/d3fkon/gin-flaq/utils"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ import (
 // Create a campaign for a from an admin
 // Creates a new campaign in the database
 func CreateCampaign(campaign *models.Campaign) any {
-	campaign.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
+	campaign.CreatedAt = models.Now()
 	campaign.QuizIds = []primitive.ObjectID{}
 	campaign.TaskType = models.TaskTypes.QUIZ
 	campaign.Id = primitive.NewObjectID()
@@ -100,9 +101,14 @@ func ParticipateInCampaign(campaignId string, user models.User) models.CampaignP
 		utils.Panic(401, "Low Flaq Point Balance", nil)
 	}
 	campaignParticipation := models.CampaignParticipation{
-		CreatedAt:  primitive.NewDateTimeFromTime(time.Now()),
-		UserId:     models.ObjId(user.Id.Hex()),
-		CampaignId: models.ObjId(campaign.Id.Hex()),
+		Id:        primitive.NewObjectID(),
+		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
+		User: models.UserWrapper{
+			Id: models.ObjId(user.Id.Hex()),
+		},
+		Campaign: models.CampaignWrapper{
+			Id: models.ObjId(campaign.Id.Hex()),
+		},
 		IsComplete: false,
 		FlaqSpent:  campaign.RequiredFlaq,
 	}
@@ -143,12 +149,14 @@ func GetQuizTemplateForCampaign(campaignId string) *models.QuizTemplate {
 // Panic if any of the above two fail
 // Evaluate the answers by checking if the answer indexes stored and the answers match
 // Create a QuizEntry with the above created data
-func EvaluateQuiz(userId, campaignParticipationId, quizTemplateId string, answers []int) models.QuizEntry {
-	campaign := models.CampaignParticipation{}
+func EvaluateQuiz(user *models.User, campaignParticipationId, quizTemplateId string, answers []int) models.QuizEntry {
+	campaignParticipation := models.CampaignParticipation{}
+	campaign := models.Campaign{}
 	quizTemplate := models.QuizTemplate{}
-	err1 := models.CampaignParticipationModel.FindOneById(campaignParticipationId, &campaign)
+	err1 := models.CampaignParticipationModel.FindOneById(campaignParticipationId, &campaignParticipation)
 	err2 := models.QuizTemplateModel.FindOneById(quizTemplateId, &quizTemplate)
-	if err1 != nil || err2 != nil {
+	err3 := models.CampaignModel.FindOneById(campaignParticipation.Campaign.Id.Hex(), &campaign)
+	if err1 != nil || err2 != nil || err3 != nil {
 		utils.Panic(401, "Error evaluating participation", err1)
 	}
 	if len(answers) != len(quizTemplate.Questions) {
@@ -166,17 +174,18 @@ func EvaluateQuiz(userId, campaignParticipationId, quizTemplateId string, answer
 	isQuizPassing := score == len(quizTemplate.Questions)
 	// Check the number of question in the quiz
 	// Check the number of correct answers in the quiz
-	participation := models.QuizEntry{
+	quizEntry := models.QuizEntry{
 		IsPassing:     isQuizPassing,
 		CreatedAt:     models.Now(),
 		Id:            primitive.NewObjectID(),
 		QuestionCount: len(quizTemplate.Questions),
 		CorrectCount:  score,
 	}
-	participation.Quiz.Id = models.ObjId(quizTemplateId)
-	participation.Campaign.Id = models.ObjId(campaignParticipationId)
-	participation.User.Id = models.ObjId(userId)
-	if err := models.QuizEntryModel.New(participation); err != nil {
+
+	quizEntry.Quiz.Id = models.ObjId(quizTemplateId)
+	quizEntry.Campaign.Id = models.ObjId(campaignParticipation.Campaign.Id.Hex())
+	quizEntry.User.Id = models.ObjId(user.Id.Hex())
+	if err := models.QuizEntryModel.New(quizEntry); err != nil {
 		utils.Panic(401, "Error creating quiz", err)
 	}
 
@@ -184,17 +193,19 @@ func EvaluateQuiz(userId, campaignParticipationId, quizTemplateId string, answer
 	// Trigger a campaign completion event
 	// Currently only handles task types which are QUIZ. Any other task type should be handled here
 	if isQuizPassing {
-		query := bson.M{
-			"_id": models.ObjId(campaign.Id.Hex()),
-		}
+		// USER IS PASSING THE QUIZ
+		// Ideally all this should be an event sent to Kafka
 		update := bson.M{
 			"$set": bson.M{
 				"IsComplete": true,
 			},
 		}
 		updated := models.CampaignParticipation{}
-		models.CampaignParticipationModel.FindOneAndUpdate(query, update, &updated)
+		models.CampaignParticipationModel.FindByIdAndUpdate(campaignParticipationId, update, &updated)
+		users.UpdateFlaqPoints(user, float64(campaign.FlaqReward))
+		rewards.AddRewardsByParticipation(user, &campaignParticipation, &campaign)
+		// TODO: Give crypto reward
 	}
 
-	return participation
+	return quizEntry
 }

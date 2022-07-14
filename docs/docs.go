@@ -338,6 +338,30 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/rewards": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rewards"
+                ],
+                "summary": "Get all rewards for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/users/apply-referral": {
             "post": {
                 "consumes": [
@@ -481,14 +505,19 @@ const docTemplate = `{
         "models.Campaign": {
             "type": "object",
             "required": [
+                "AirdropPerUser",
                 "CurrentAirdrop",
                 "Description",
                 "Name",
                 "RequiredFlaq",
+                "TickerImageUrl",
                 "TickerName",
                 "TotalAirdrop"
             ],
             "properties": {
+                "AirdropPerUser": {
+                    "type": "number"
+                },
                 "ArticleUrls": {
                     "type": "array",
                     "items": {
@@ -496,10 +525,13 @@ const docTemplate = `{
                     }
                 },
                 "CurrentAirdrop": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "Description": {
                     "type": "string"
+                },
+                "FlaqReward": {
+                    "type": "integer"
                 },
                 "Id": {
                     "type": "string"
@@ -525,11 +557,14 @@ const docTemplate = `{
                 "TaskType": {
                     "type": "string"
                 },
+                "TickerImageUrl": {
+                    "type": "string"
+                },
                 "TickerName": {
                     "type": "string"
                 },
                 "TotalAirdrop": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "YTVideoUrl": {
                     "type": "string"

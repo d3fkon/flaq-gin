@@ -52,8 +52,17 @@ func CreateUser(data CreateUserBody) (models.User, error) {
 	return user, nil
 }
 
+// Helper method to update user's flaq points balance by user id
+func UpdateFlaqPointsById(userId string, delta float64) error {
+	user := models.User{}
+	if err := models.UserModel.FindOneById(userId, &user); err != nil {
+		return errors.New("Cannot find user")
+	}
+	return UpdateFlaqPoints(&user, delta)
+}
+
 // A helper method to update the user's flaq points balance + or minus
-func UpdateFlaqPoints(user *models.User, delta float64) {
+func UpdateFlaqPoints(user *models.User, delta float64) error {
 	currentPoints := user.FlaqPoints
 	updated := 0
 	// Safe math
@@ -65,7 +74,7 @@ func UpdateFlaqPoints(user *models.User, delta float64) {
 			"FlaqPoints": float64(updated),
 		},
 	}
-	models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, user)
+	return models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, user)
 }
 
 func UpdateRefreshToken(user *models.User, refreshToken string) {

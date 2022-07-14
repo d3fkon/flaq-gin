@@ -58,14 +58,18 @@ definitions:
     type: object
   models.Campaign:
     properties:
+      AirdropPerUser:
+        type: number
       ArticleUrls:
         items:
           type: string
         type: array
       CurrentAirdrop:
-        type: integer
+        type: number
       Description:
         type: string
+      FlaqReward:
+        type: integer
       Id:
         type: string
       Name:
@@ -82,17 +86,21 @@ definitions:
         type: integer
       TaskType:
         type: string
+      TickerImageUrl:
+        type: string
       TickerName:
         type: string
       TotalAirdrop:
-        type: integer
+        type: number
       YTVideoUrl:
         type: string
     required:
+    - AirdropPerUser
     - CurrentAirdrop
     - Description
     - Name
     - RequiredFlaq
+    - TickerImageUrl
     - TickerName
     - TotalAirdrop
     type: object
@@ -362,6 +370,22 @@ paths:
       summary: Register a new UPI Payment
       tags:
       - Payments
+  /rewards:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get all rewards for a user
+      tags:
+      - Rewards
   /users/apply-referral:
     post:
       consumes:

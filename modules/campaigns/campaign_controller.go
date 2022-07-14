@@ -1,6 +1,8 @@
 package campaigns
 
 import (
+	"log"
+
 	"github.com/d3fkon/gin-flaq/middleware"
 	"github.com/d3fkon/gin-flaq/models"
 	"github.com/d3fkon/gin-flaq/modules"
@@ -41,6 +43,7 @@ func Setup(g *gin.Engine) {
 func (c Controller) createCampaign(ctx *gin.Context) {
 	body := models.Campaign{}
 	c.BindBody(ctx, &body)
+	log.Println(body.Name)
 	CreateCampaign(&body)
 	c.HandleResponse(ctx, body)
 }
@@ -121,7 +124,7 @@ func (c Controller) evaluateQuiz(ctx *gin.Context) {
 	body := quizParticipationBody{}
 	user := c.ReqUser(ctx)
 	c.BindBody(ctx, &body)
-	res := EvaluateQuiz(user.Id.Hex(), body.CampaignParticipationId, body.QuizTemplateId, body.Answers)
+	res := EvaluateQuiz(&user, body.CampaignParticipationId, body.QuizTemplateId, body.Answers)
 	c.HandleResponse(ctx, res)
 }
 
