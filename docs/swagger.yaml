@@ -36,6 +36,35 @@ definitions:
       QuizTemplateId:
         type: string
     type: object
+  campaigns.campaignBody:
+    properties:
+      AirdropPerUser:
+        type: number
+      CurrentAirdrop:
+        type: number
+      Description:
+        type: string
+      FlaqReward:
+        type: integer
+      RequiredFlaq:
+        type: integer
+      TickerImgUrl:
+        type: string
+      TickerName:
+        type: string
+      Title:
+        type: string
+      TotalAirdrop:
+        type: number
+    required:
+    - AirdropPerUser
+    - CurrentAirdrop
+    - FlaqReward
+    - RequiredFlaq
+    - TickerImgUrl
+    - TickerName
+    - TotalAirdrop
+    type: object
   campaigns.campaignParticipationBody:
     properties:
       CampaignId:
@@ -55,54 +84,6 @@ definitions:
     - Answers
     - CampaignParticipationId
     - QuizTemplateId
-    type: object
-  models.Campaign:
-    properties:
-      AirdropPerUser:
-        type: number
-      ArticleUrls:
-        items:
-          type: string
-        type: array
-      CurrentAirdrop:
-        type: number
-      Description:
-        type: string
-      FlaqReward:
-        type: integer
-      Id:
-        type: string
-      Name:
-        type: string
-      QuizIds:
-        items:
-          type: string
-        type: array
-      Quizzes:
-        items:
-          $ref: '#/definitions/models.QuizTemplate'
-        type: array
-      RequiredFlaq:
-        type: integer
-      TaskType:
-        type: string
-      TickerImageUrl:
-        type: string
-      TickerName:
-        type: string
-      TotalAirdrop:
-        type: number
-      YTVideoUrl:
-        type: string
-    required:
-    - AirdropPerUser
-    - CurrentAirdrop
-    - Description
-    - Name
-    - RequiredFlaq
-    - TickerImageUrl
-    - TickerName
-    - TotalAirdrop
     type: object
   models.Question:
     properties:
@@ -254,10 +235,10 @@ paths:
       parameters:
       - description: Campaign Details
         in: body
-        name: models.Campaign
+        name: campaignBody
         required: true
         schema:
-          $ref: '#/definitions/models.Campaign'
+          $ref: '#/definitions/campaigns.campaignBody'
       responses: {}
       summary: Create a campaign
       tags:

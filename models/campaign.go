@@ -14,22 +14,21 @@ var TaskTypes taskTypes = taskTypes{
 }
 
 type Campaign struct {
-	Id             primitive.ObjectID   `bson:"_id" json:"Id"`
-	QuizIds        []primitive.ObjectID `bson:"QuizIds" json:"QuizIds"`
-	Quizzes        *[]QuizTemplate      `bson:"Quizzes" json:"Quizzes"`
-	Name           string               `bson:"Name" json:"Name"`
-	Description    string               `bson:"Description" json:"Description" binding:"required"`
-	RequiredFlaq   int                  `bson:"RequiredFlaq" json:"RequiredFlaq" binding:"required"`
-	FlaqReward     int                  `bson:"FlaqReward" json:"FlaqReward"`
-	TickerName     string               `bson:"TickerName" json:"TickerName" binding:"required"`
-	TickerImageUrl string               `bson:"TickerImageUrl" json:"TickerImageUrl" binding:"required"`
-	AirdropPerUser float64              `bson:"AirdropPerUser" json:"AirdropPerUser" binding:"required"`
-	TotalAirdrop   float64              `bson:"TotalAirdrop" json:"TotalAirdrop" binding:"required"`
-	CurrentAirdrop float64              `bson:"CurrentAirdrop" json:"CurrentAirdrop" binding:"required"`
-	CreatedAt      primitive.DateTime   `bson:"CreatedAt" json:"-"`
-	TaskType       string               `bson:"TaskType" json:"TaskType"`
-	ArticleUrls    []string             `bson:"ArticleUrls" json:"ArticleUrls"`
-	YTVideoUrl     string               `bson:"YTVideoUrl" json:"YTVideoUrl"`
+	Id             primitive.ObjectID `bson:"_id" json:"Id"`
+	Quizzes        QuizSliceWrapper   `bson:"Quizzes" json:"Quizzes"`
+	Description    string             `bson:"Description" json:"Description" binding:"required"`
+	Title          string             `bson:"Title" json:"Title" binding:"required"`
+	RequiredFlaq   int                `bson:"RequiredFlaq" json:"RequiredFlaq" binding:"required"`
+	FlaqReward     int                `bson:"FlaqReward" json:"FlaqReward"`
+	TickerName     string             `bson:"TickerName" json:"TickerName" binding:"required"`
+	TickerImageUrl string             `bson:"TickerImageUrl" json:"TickerImageUrl" binding:"required"`
+	AirdropPerUser float64            `bson:"AirdropPerUser" json:"AirdropPerUser" binding:"required"`
+	TotalAirdrop   float64            `bson:"TotalAirdrop" json:"TotalAirdrop" binding:"required"`
+	CurrentAirdrop float64            `bson:"CurrentAirdrop" json:"CurrentAirdrop" binding:"required"`
+	CreatedAt      primitive.DateTime `bson:"CreatedAt" json:"-"`
+	TaskType       string             `bson:"TaskType" json:"TaskType"`
+	ArticleUrls    []string           `bson:"ArticleUrls" json:"ArticleUrls"`
+	YTVideoUrl     string             `bson:"YTVideoUrl" json:"YTVideoUrl"`
 }
 
 type CampaignWrapper struct {

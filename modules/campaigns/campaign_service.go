@@ -2,6 +2,7 @@ package campaigns
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/d3fkon/gin-flaq/models"
@@ -15,12 +16,26 @@ import (
 
 // Create a campaign for a from an admin
 // Creates a new campaign in the database
-func CreateCampaign(campaign *models.Campaign) any {
-	campaign.CreatedAt = models.Now()
-	campaign.QuizIds = []primitive.ObjectID{}
-	campaign.TaskType = models.TaskTypes.QUIZ
-	campaign.Id = primitive.NewObjectID()
-	models.CampaignModel.New(*campaign)
+func CreateCampaign(data *campaignBody) models.Campaign {
+	campaign := models.Campaign{
+		CreatedAt: models.Now(),
+		Quizzes: models.QuizSliceWrapper{
+			Ids: []primitive.ObjectID{},
+		},
+		Title:          data.Title,
+		Description:    data.Description,
+		TickerName:     data.TickerName,
+		TickerImageUrl: data.TickerImgUrl,
+		TaskType:       models.TaskTypes.QUIZ,
+		FlaqReward:     data.FlaqReward,
+		CurrentAirdrop: data.CurrentAirdrop,
+		TotalAirdrop:   data.TotalAirdrop,
+		Id:             primitive.NewObjectID(),
+	}
+
+	if err := models.CampaignModel.New(campaign); err != nil {
+		utils.Panic(401, "Error occured creating", err)
+	}
 	return campaign
 }
 
@@ -51,7 +66,7 @@ func AddQuizToCampaign(campaignId string, quizTemplateId string) models.Campaign
 
 	update := bson.M{
 		"$push": bson.M{
-			"QuizIds": models.ObjId(quizTemplateId),
+			"Quizzes.Ids": models.ObjId(quizTemplateId),
 		},
 	}
 	updated := models.Campaign{}
@@ -66,7 +81,7 @@ func AddQuizToCampaign(campaignId string, quizTemplateId string) models.Campaign
 // The service panics if there is an error finding campaign participations or while populating it
 func GetCampaignParticipationForUser(user models.User) gin.H {
 	query := bson.D{{
-		Key: "UserId", Value: models.ObjId(user.Id.Hex()),
+		Key: "User.Id", Value: models.ObjId(user.Id.Hex()),
 	}}
 
 	// All campaigns the user is participating in
@@ -127,18 +142,18 @@ func GetQuizTemplateForCampaign(campaignId string) *models.QuizTemplate {
 	}}
 
 	populate := models.Populate{
-		As:           "Quizzes",
+		As:           "Quizzes.Data",
 		ForeignModel: models.QuizTemplates,
-		LocalField:   "QuizIds",
+		LocalField:   "Quizzes.Ids",
 	}
 
 	campaigns := []models.Campaign{}
 	if err := models.CampaignModel.FindManyPopulate(query, populate, &campaigns); err != nil {
 		utils.Panic(401, "[1] Campaign Not Found", err)
 	}
-	if len(campaigns) > 0 && len(*campaigns[0].Quizzes) > 0 {
+	if len(campaigns) > 0 && len(*&campaigns[0].Quizzes.Ids) > 0 {
 		quizzes := campaigns[0].Quizzes
-		return &(*quizzes)[0]
+		return &(*quizzes.Data)[0]
 	}
 	utils.Panic(401, "[2] Campaign Not Found", nil)
 	return nil
@@ -157,6 +172,7 @@ func EvaluateQuiz(user *models.User, campaignParticipationId, quizTemplateId str
 	err2 := models.QuizTemplateModel.FindOneById(quizTemplateId, &quizTemplate)
 	err3 := models.CampaignModel.FindOneById(campaignParticipation.Campaign.Id.Hex(), &campaign)
 	if err1 != nil || err2 != nil || err3 != nil {
+		log.Printf("E1 %e\nE2 %e\nE3 %e", err1, err2, err3)
 		utils.Panic(401, "Error evaluating participation", err1)
 	}
 	if len(answers) != len(quizTemplate.Questions) {

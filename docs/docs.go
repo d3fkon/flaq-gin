@@ -136,11 +136,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Campaign Details",
-                        "name": "models.Campaign",
+                        "name": "campaignBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Campaign"
+                            "$ref": "#/definitions/campaigns.campaignBody"
                         }
                     }
                 ],
@@ -472,6 +472,47 @@ const docTemplate = `{
                 }
             }
         },
+        "campaigns.campaignBody": {
+            "type": "object",
+            "required": [
+                "AirdropPerUser",
+                "CurrentAirdrop",
+                "FlaqReward",
+                "RequiredFlaq",
+                "TickerImgUrl",
+                "TickerName",
+                "TotalAirdrop"
+            ],
+            "properties": {
+                "AirdropPerUser": {
+                    "type": "number"
+                },
+                "CurrentAirdrop": {
+                    "type": "number"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "FlaqReward": {
+                    "type": "integer"
+                },
+                "RequiredFlaq": {
+                    "type": "integer"
+                },
+                "TickerImgUrl": {
+                    "type": "string"
+                },
+                "TickerName": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "TotalAirdrop": {
+                    "type": "number"
+                }
+            }
+        },
         "campaigns.campaignParticipationBody": {
             "type": "object",
             "properties": {
@@ -498,75 +539,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "QuizTemplateId": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Campaign": {
-            "type": "object",
-            "required": [
-                "AirdropPerUser",
-                "CurrentAirdrop",
-                "Description",
-                "Name",
-                "RequiredFlaq",
-                "TickerImageUrl",
-                "TickerName",
-                "TotalAirdrop"
-            ],
-            "properties": {
-                "AirdropPerUser": {
-                    "type": "number"
-                },
-                "ArticleUrls": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "CurrentAirdrop": {
-                    "type": "number"
-                },
-                "Description": {
-                    "type": "string"
-                },
-                "FlaqReward": {
-                    "type": "integer"
-                },
-                "Id": {
-                    "type": "string"
-                },
-                "Name": {
-                    "type": "string"
-                },
-                "QuizIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "Quizzes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.QuizTemplate"
-                    }
-                },
-                "RequiredFlaq": {
-                    "type": "integer"
-                },
-                "TaskType": {
-                    "type": "string"
-                },
-                "TickerImageUrl": {
-                    "type": "string"
-                },
-                "TickerName": {
-                    "type": "string"
-                },
-                "TotalAirdrop": {
-                    "type": "number"
-                },
-                "YTVideoUrl": {
                     "type": "string"
                 }
             }

@@ -23,6 +23,11 @@ type QuizWrapper struct {
 	Data *QuizTemplate      `bson:"Data" json:"Data"`
 }
 
+type QuizSliceWrapper struct {
+	Ids  []primitive.ObjectID `bson:"Ids" json:"Ids"`
+	Data *[]QuizTemplate      `bson:"Data" json:"Data"`
+}
+
 type QuizEntry struct {
 	Id            primitive.ObjectID `bson:"_id"`
 	Campaign      CampaignWrapper    `bson:"Campaign"`

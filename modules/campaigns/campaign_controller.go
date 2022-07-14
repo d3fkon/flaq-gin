@@ -34,18 +34,30 @@ func Setup(g *gin.Engine) {
 	}
 }
 
+type campaignBody struct {
+	Title          string  `json:"Title"`
+	Description    string  `json:"Description"`
+	TickerName     string  `json:"TickerName" binding:"required"`
+	TickerImgUrl   string  `json:"TickerImgUrl" binding:"required"`
+	RequiredFlaq   int     `json:"RequiredFlaq" binding:"required"`
+	FlaqReward     int     `json:"FlaqReward" binding:"required"`
+	AirdropPerUser float64 `json:"AirdropPerUser" binding:"required"`
+	TotalAirdrop   float64 `json:"TotalAirdrop" binding:"required"`
+	CurrentAirdrop float64 `json:"CurrentAirdrop" binding:"required"`
+}
+
 // Create a campaign
 // @Router   /campaign/a [post]
 // @Summary  Create a campaign
 // @Tags     Campaign Admin
 // @Accept   application/json
-// @Param    models.Campaign  body  models.Campaign  true  "Campaign Details"
+// @Param    campaignBody  body  campaignBody  true  "Campaign Details"
 func (c Controller) createCampaign(ctx *gin.Context) {
-	body := models.Campaign{}
+	body := campaignBody{}
 	c.BindBody(ctx, &body)
-	log.Println(body.Name)
-	CreateCampaign(&body)
-	c.HandleResponse(ctx, body)
+	log.Println(body)
+	res := CreateCampaign(&body)
+	c.HandleResponse(ctx, res)
 }
 
 // Create a quiz template to be used
@@ -119,7 +131,7 @@ type quizParticipationBody struct {
 // @param    Authorization  header  string  true  "Authorization"
 // @Tags     Campaigns
 // @Accept   application/json
-// @Param    quizParticipationBody   body  quizParticipationBody  true  "Quiz and Campaign Details"
+// @Param    quizParticipationBody  body  quizParticipationBody  true  "Quiz and Campaign Details"
 func (c Controller) evaluateQuiz(ctx *gin.Context) {
 	body := quizParticipationBody{}
 	user := c.ReqUser(ctx)
