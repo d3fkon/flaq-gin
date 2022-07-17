@@ -30,20 +30,23 @@ func Setup(g *gin.Engine) {
 			// Get all participants
 			authenticated.POST("/participate", c.participate)
 			authenticated.POST("/quiz/evaluate", c.evaluateQuiz)
+			authenticated.GET("/conversion", c.conversion)
 		}
 	}
 }
 
 type campaignBody struct {
-	Title          string  `json:"Title"`
-	Description    string  `json:"Description"`
-	TickerName     string  `json:"TickerName" binding:"required"`
-	TickerImgUrl   string  `json:"TickerImgUrl" binding:"required"`
-	RequiredFlaq   int     `json:"RequiredFlaq" binding:"required"`
-	FlaqReward     int     `json:"FlaqReward" binding:"required"`
-	AirdropPerUser float64 `json:"AirdropPerUser" binding:"required"`
-	TotalAirdrop   float64 `json:"TotalAirdrop" binding:"required"`
-	CurrentAirdrop float64 `json:"CurrentAirdrop" binding:"required"`
+	Title          string   `json:"Title"`
+	Description    string   `json:"Description"`
+	TickerName     string   `json:"TickerName" binding:"required"`
+	TickerImgUrl   string   `json:"TickerImgUrl" binding:"required"`
+	RequiredFlaq   int      `json:"RequiredFlaq" binding:"required"`
+	FlaqReward     int      `json:"FlaqReward" binding:"required"`
+	AirdropPerUser float64  `json:"AirdropPerUser" binding:"required"`
+	TotalAirdrop   float64  `json:"TotalAirdrop" binding:"required"`
+	CurrentAirdrop float64  `json:"CurrentAirdrop" binding:"required"`
+	YTVideoUrl     string   `json:"YTVideoUrl" binding:"required"`
+	ArticleUrls    []string `json:"ArticleUrls" binding:"required"`
 }
 
 // Create a campaign
@@ -159,4 +162,18 @@ func (c Controller) participate(ctx *gin.Context) {
 	c.BindBody(ctx, &body)
 	res := ParticipateInCampaign(body.CampaignId, user)
 	c.HandleResponse(ctx, res)
+}
+
+// Convert a Ticker name to INR
+// @Router   /campaign/conversion [get]
+// @Summary  Get all conversions
+// @param    Authorization  header  string  true  "Authorization" "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFzaHdpbkBvbnBhci5pbiIsImV4cCI6MTY1NzY1NjUzOX0.YhL-tGczj3OVlXNjCLwNJL4rkLdz7IQey4JFgmKmgoY"
+// @Tags     Conversion
+// @Accept   application/json
+func (c Controller) conversion(ctx *gin.Context) {
+	c.ReqUser(ctx)
+	c.HandleResponse(ctx, gin.H{
+		"USDT":  80.0,
+		"MATIC": 59.23,
+	})
 }

@@ -40,6 +40,10 @@ definitions:
     properties:
       AirdropPerUser:
         type: number
+      ArticleUrls:
+        items:
+          type: string
+        type: array
       CurrentAirdrop:
         type: number
       Description:
@@ -56,14 +60,18 @@ definitions:
         type: string
       TotalAirdrop:
         type: number
+      YTVideoUrl:
+        type: string
     required:
     - AirdropPerUser
+    - ArticleUrls
     - CurrentAirdrop
     - FlaqReward
     - RequiredFlaq
     - TickerImgUrl
     - TickerName
     - TotalAirdrop
+    - YTVideoUrl
     type: object
   campaigns.campaignParticipationBody:
     properties:
@@ -273,6 +281,20 @@ paths:
       summary: Create a quiz template
       tags:
       - Campaign Admin
+  /campaign/conversion:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses: {}
+      summary: Get all conversions
+      tags:
+      - Conversion
   /campaign/participate:
     post:
       consumes:

@@ -193,6 +193,27 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/campaign/conversion": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Conversion"
+                ],
+                "summary": "Get all conversions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/campaign/participate": {
             "post": {
                 "consumes": [
@@ -476,16 +497,24 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "AirdropPerUser",
+                "ArticleUrls",
                 "CurrentAirdrop",
                 "FlaqReward",
                 "RequiredFlaq",
                 "TickerImgUrl",
                 "TickerName",
-                "TotalAirdrop"
+                "TotalAirdrop",
+                "YTVideoUrl"
             ],
             "properties": {
                 "AirdropPerUser": {
                     "type": "number"
+                },
+                "ArticleUrls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "CurrentAirdrop": {
                     "type": "number"
@@ -510,6 +539,9 @@ const docTemplate = `{
                 },
                 "TotalAirdrop": {
                     "type": "number"
+                },
+                "YTVideoUrl": {
+                    "type": "string"
                 }
             }
         },

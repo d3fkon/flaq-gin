@@ -33,6 +33,8 @@ func CreateCampaign(data *campaignBody) models.Campaign {
 		AirdropPerUser: data.AirdropPerUser,
 		RequiredFlaq:   data.RequiredFlaq,
 		Id:             primitive.NewObjectID(),
+		YTVideoUrl:     data.YTVideoUrl,
+		ArticleUrls:    data.ArticleUrls,
 	}
 
 	if err := models.CampaignModel.New(campaign); err != nil {
