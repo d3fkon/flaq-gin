@@ -171,9 +171,15 @@ func (c Controller) participate(ctx *gin.Context) {
 // @Tags     Conversion
 // @Accept   application/json
 func (c Controller) conversion(ctx *gin.Context) {
+	res := []gin.H{{
+		"TickerName": "USDT",
+		"Conversion": 80.0,
+		"Name":       "USD Tether",
+	}, {
+		"TickerName": "MATIC",
+		"Conversion": 59.23,
+		"Name":       "Polygon",
+	}}
 	c.ReqUser(ctx)
-	c.HandleResponse(ctx, gin.H{
-		"USDT":  80.0,
-		"MATIC": 59.23,
-	})
+	c.HandleResponse(ctx, res)
 }
