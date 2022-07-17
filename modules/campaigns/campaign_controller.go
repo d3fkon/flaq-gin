@@ -177,7 +177,7 @@ type ticker struct {
 // @Tags     Conversion
 // @Accept   application/json
 func (c Controller) conversion(ctx *gin.Context) {
-	tickers = []ticker{
+	tickers := []ticker{
 		{
 			TickerName: "USDT",
 			Name:       "USD Tether",
@@ -195,5 +195,5 @@ func (c Controller) conversion(ctx *gin.Context) {
 		},
 	}
 	c.ReqUser(ctx)
-	c.HandleResponse(ctx, res)
+	c.HandleResponse(ctx, tickers)
 }
