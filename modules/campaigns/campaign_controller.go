@@ -164,6 +164,12 @@ func (c Controller) participate(ctx *gin.Context) {
 	c.HandleResponse(ctx, res)
 }
 
+type ticker struct {
+	TickerName string  `json:"TickerName"`
+	Conversion float64 `json:"Conversion"`
+	Name       string  `json:"Name"`
+}
+
 // Convert a Ticker name to INR
 // @Router   /campaign/conversion [get]
 // @Summary  Get all conversions
@@ -171,15 +177,23 @@ func (c Controller) participate(ctx *gin.Context) {
 // @Tags     Conversion
 // @Accept   application/json
 func (c Controller) conversion(ctx *gin.Context) {
-	res := []gin.H{{
-		"TickerName": "USDT",
-		"Conversion": 80.0,
-		"Name":       "USD Tether",
-	}, {
-		"TickerName": "MATIC",
-		"Conversion": 59.23,
-		"Name":       "Polygon",
-	}}
+	tickers = []ticker{
+		{
+			TickerName: "USDT",
+			Name:       "USD Tether",
+			Conversion: 80.0,
+		},
+		{
+			TickerName: "BNB",
+			Name:       "Binance Token",
+			Conversion: 19864.0,
+		},
+		{
+			TickerName: "MATIC",
+			Name:       "Polygon",
+			Conversion: 59.23,
+		},
+	}
 	c.ReqUser(ctx)
 	c.HandleResponse(ctx, res)
 }

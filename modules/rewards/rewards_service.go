@@ -53,7 +53,7 @@ func GetAllRewards(user *models.User) []models.Reward {
 		LocalField:   "CampaignParticipations.Ids",
 	}
 	if err := models.RewardModel.FindManyPopulate(query, populate, &rewards); err != nil {
-		utils.Panic(401, "No rewards found for user", nil)
+		utils.Panic(400, "No rewards found for user", nil)
 	}
 	return rewards
 }

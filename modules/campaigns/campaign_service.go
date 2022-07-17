@@ -38,7 +38,7 @@ func CreateCampaign(data *campaignBody) models.Campaign {
 	}
 
 	if err := models.CampaignModel.New(campaign); err != nil {
-		utils.Panic(401, "Error occured creating", err)
+		utils.Panic(400, "Error occured creating", err)
 	}
 	return campaign
 }
@@ -75,7 +75,7 @@ func AddQuizToCampaign(campaignId string, quizTemplateId string) models.Campaign
 	}
 	updated := models.Campaign{}
 	if err := models.CampaignModel.FindOneAndUpdate(query, update, &updated); err != nil {
-		utils.Panic(401, "Campagin not found", err)
+		utils.Panic(400, "Campagin not found", err)
 	}
 	return updated
 }
@@ -91,13 +91,13 @@ func GetCampaignParticipationForUser(user models.User) gin.H {
 	// All campaigns the user is participating in
 	participations := []models.CampaignParticipation{}
 	if err := models.CampaignParticipationModel.FindMany(query, &participations); err != nil {
-		utils.Panic(401, "Error finding user participations", err)
+		utils.Panic(400, "Error finding user participations", err)
 	}
 
 	// All campaigns
 	campaigns := []models.Campaign{}
 	if err := models.CampaignModel.FindMany(bson.M{}, &campaigns); err != nil {
-		utils.Panic(401, "Error finding campaigns", err)
+		utils.Panic(400, "Error finding campaigns", err)
 	}
 
 	return gin.H{
@@ -117,7 +117,7 @@ func ParticipateInCampaign(campaignId string, user models.User) models.CampaignP
 	}
 	requiredFlaq := campaign.RequiredFlaq
 	if user.FlaqPoints < float64(requiredFlaq) {
-		utils.Panic(401, "Low Flaq Point Balance", nil)
+		utils.Panic(400, "Low Flaq Point Balance", nil)
 	}
 	campaignParticipation := models.CampaignParticipation{
 		Id:        primitive.NewObjectID(),
@@ -153,13 +153,13 @@ func GetQuizTemplateForCampaign(campaignId string) *models.QuizTemplate {
 
 	campaigns := []models.Campaign{}
 	if err := models.CampaignModel.FindManyPopulate(query, populate, &campaigns); err != nil {
-		utils.Panic(401, "[1] Campaign Not Found", err)
+		utils.Panic(400, "[1] Campaign Not Found", err)
 	}
 	if len(campaigns) > 0 && len(*&campaigns[0].Quizzes.Ids) > 0 {
 		quizzes := campaigns[0].Quizzes
 		return &(*quizzes.Data)[0]
 	}
-	utils.Panic(401, "[2] Campaign Not Found", nil)
+	utils.Panic(400, "[2] Campaign Not Found", nil)
 	return nil
 }
 
@@ -177,11 +177,11 @@ func EvaluateQuiz(user *models.User, campaignParticipationId, quizTemplateId str
 	err3 := models.CampaignModel.FindOneById(campaignParticipation.Campaign.Id.Hex(), &campaign)
 	if err1 != nil || err2 != nil || err3 != nil {
 		log.Printf("E1 %e\nE2 %e\nE3 %e", err1, err2, err3)
-		utils.Panic(401, "Error evaluating participation", err1)
+		utils.Panic(400, "Error evaluating participation", err1)
 	}
 	if len(answers) != len(quizTemplate.Questions) {
 		error := fmt.Sprintf("Invalid answers array length. Expected %d got %d", len(quizTemplate.Questions), len(answers))
-		utils.Panic(401, error, nil)
+		utils.Panic(400, error, nil)
 	}
 	// Evaluate the quiz by checking if the indexes of answers and the data match
 	score := 0
@@ -206,7 +206,7 @@ func EvaluateQuiz(user *models.User, campaignParticipationId, quizTemplateId str
 	quizEntry.Campaign.Id = models.ObjId(campaignParticipation.Campaign.Id.Hex())
 	quizEntry.User.Id = models.ObjId(user.Id.Hex())
 	if err := models.QuizEntryModel.New(quizEntry); err != nil {
-		utils.Panic(401, "Error creating quiz", err)
+		utils.Panic(400, "Error creating quiz", err)
 	}
 
 	// If the task type was quiz and the quiz is answered successfully
