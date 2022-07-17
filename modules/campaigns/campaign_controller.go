@@ -6,6 +6,7 @@ import (
 	"github.com/d3fkon/gin-flaq/middleware"
 	"github.com/d3fkon/gin-flaq/models"
 	"github.com/d3fkon/gin-flaq/modules"
+	"github.com/d3fkon/gin-flaq/modules/conversions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -164,12 +165,6 @@ func (c Controller) participate(ctx *gin.Context) {
 	c.HandleResponse(ctx, res)
 }
 
-type ticker struct {
-	TickerName string  `json:"TickerName"`
-	Conversion float64 `json:"Conversion"`
-	Name       string  `json:"Name"`
-}
-
 // Convert a Ticker name to INR
 // @Router   /campaign/conversion [get]
 // @Summary  Get all conversions
@@ -177,23 +172,7 @@ type ticker struct {
 // @Tags     Conversion
 // @Accept   application/json
 func (c Controller) conversion(ctx *gin.Context) {
-	tickers := []ticker{
-		{
-			TickerName: "USDT",
-			Name:       "USD Tether",
-			Conversion: 80.0,
-		},
-		{
-			TickerName: "BNB",
-			Name:       "Binance Token",
-			Conversion: 19864.0,
-		},
-		{
-			TickerName: "MATIC",
-			Name:       "Polygon",
-			Conversion: 59.23,
-		},
-	}
+	tickers := conversions.GetTickers()
 	c.ReqUser(ctx)
 	c.HandleResponse(ctx, tickers)
 }

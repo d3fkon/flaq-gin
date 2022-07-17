@@ -1,7 +1,10 @@
 package rewards
 
 import (
+	"log"
+
 	"github.com/d3fkon/gin-flaq/models"
+	"github.com/d3fkon/gin-flaq/modules/conversions"
 	"github.com/d3fkon/gin-flaq/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,24 +41,43 @@ func AddRewardsByParticipation(user *models.User, participation *models.Campaign
 	}
 }
 
+type rewardWithTicker struct {
+	models.Reward
+	conversions.Ticker
+}
+
 // Get all the rewards for a given user
 // Get all the rewards which are already grouped by ticker name, populate and return
-func GetAllRewards(user *models.User) []models.Reward {
+func GetAllRewards(user *models.User) []rewardWithTicker {
 	rewards := []models.Reward{}
 	query := bson.D{{
 		Key:   "User.Id",
 		Value: models.ObjId(user.Id.Hex()),
 	}}
-
 	populate := models.Populate{
 		As:           "CampaignParticipations.Data",
 		ForeignModel: models.CampaignParticipations,
 		LocalField:   "CampaignParticipations.Ids",
 	}
+
 	if err := models.RewardModel.FindManyPopulate(query, populate, &rewards); err != nil {
 		utils.Panic(400, "No rewards found for user", nil)
 	}
-	return rewards
+
+	modifiedRewards := []rewardWithTicker{}
+	for _, reward := range rewards {
+		ticker, err := conversions.GetTickerByName(reward.TickerName)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		r := rewardWithTicker{
+			reward,
+			ticker,
+		}
+		modifiedRewards = append(modifiedRewards, r)
+	}
+	return modifiedRewards
 }
 
 // Claim rewards from the user's wallet
