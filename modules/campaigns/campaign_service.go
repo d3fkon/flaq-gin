@@ -30,6 +30,8 @@ func CreateCampaign(data *campaignBody) models.Campaign {
 		FlaqReward:     data.FlaqReward,
 		CurrentAirdrop: data.CurrentAirdrop,
 		TotalAirdrop:   data.TotalAirdrop,
+		AirdropPerUser: data.AirdropPerUser,
+		RequiredFlaq:   data.RequiredFlaq,
 		Id:             primitive.NewObjectID(),
 	}
 

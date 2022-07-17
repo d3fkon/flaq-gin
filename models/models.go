@@ -23,8 +23,7 @@ const (
 	Rewards                = "rewards"
 )
 
-type Models interface {
-}
+type Models interface{}
 
 // Cannot use utils due to circular dependency
 func GetContext() (context.Context, context.CancelFunc) {
@@ -58,7 +57,7 @@ func (c Collection[M]) FindOne(query bson.M, model *M) error {
 	ctx, cancel := GetContext()
 	defer cancel()
 	if err := c.I.FindOne(ctx, query).Decode(model); err != nil {
-		return errors.New("Cannot find document")
+		return errors.New("cannot find document")
 	}
 	return nil
 }
@@ -69,31 +68,6 @@ func (c Collection[M]) FindOneById(id string, model *M) error {
 	if err := c.I.FindOne(ctx, bson.M{"_id": ObjId(id)}).Decode(model); err != nil {
 		return errors.New("Cannot find document")
 	}
-	return nil
-}
-
-func (c Collection[M]) FindOneByIdAndPopulate(id string, populate Populate, model *M) error {
-	// match := bson.D{{Key: "$match", Value: bson.D{
-	// 	{
-	// 		Key:   "_id",
-	// 		Value: ObjId(id),
-	// 	},
-	// }}}
-	// lookup := bson.D{{Key: "$lookup", Value: bson.D{{
-	// 	Key:   "from",
-	// 	Value: populate.ForeignModel,
-	// }, {
-	// 	Key:   "localField",
-	// 	Value: populate.LocalField,
-	// }, {
-	// 	Key:   "foreignField",
-	// 	Value: "_id",
-	// }, {
-	// 	Key:   "as",
-	// 	Value: populate.As,
-	// }}}}
-
-	// cursor, err := c.I.Aggregate(ctx, mongo.Pipeline{match, lookup})
 	return nil
 }
 
