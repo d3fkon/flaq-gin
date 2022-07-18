@@ -2,11 +2,14 @@ basePath: /
 definitions:
   auth.LoginBody:
     properties:
+      DeviceToken:
+        type: string
       Email:
         type: string
       Password:
         type: string
     required:
+    - DeviceToken
     - Email
     - Password
     type: object

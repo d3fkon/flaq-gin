@@ -50,8 +50,9 @@ func (c Controller) signup(ctx *gin.Context) {
 }
 
 type LoginBody struct {
-	Email    string `binding:"required,email" json:"Email"`
-	Password string `binding:"required" json:"Password"`
+	Email       string `binding:"required,email" json:"Email"`
+	Password    string `binding:"required" json:"Password"`
+	DeviceToken string `binding:"required" json:"DeviceToken"`
 }
 
 // User login godoc
@@ -69,6 +70,7 @@ func (c Controller) login(ctx *gin.Context) {
 		utils.Panic(http.StatusBadRequest, "Invalid Password", nil)
 		return
 	}
+	users.SetDeviceToken(body.DeviceToken, &user)
 	token := genTokenAndSetCookie(ctx, &user)
 	c.HandleResponse(ctx, token)
 }

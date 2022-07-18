@@ -35,8 +35,10 @@ type Wallet struct {
 	Avax     string `bson:"Avax"`
 }
 
-var referralIndex = configs.CreateIndex(Users, "ReferralCode", true, false)
-var emailIndex = configs.CreateIndex(Users, "Email", true, false)
+var (
+	referralIndex = configs.CreateIndex(Users, "ReferralCode", true, false)
+	emailIndex    = configs.CreateIndex(Users, "Email", true, false)
+)
 
 var UserModel = makeModel[User](Users)
 

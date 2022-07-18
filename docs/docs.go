@@ -442,10 +442,14 @@ const docTemplate = `{
         "auth.LoginBody": {
             "type": "object",
             "required": [
+                "DeviceToken",
                 "Email",
                 "Password"
             ],
             "properties": {
+                "DeviceToken": {
+                    "type": "string"
+                },
                 "Email": {
                     "type": "string"
                 },

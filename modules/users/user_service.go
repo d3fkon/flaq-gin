@@ -3,6 +3,7 @@ package users
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -84,6 +85,19 @@ func UpdateRefreshToken(user *models.User, refreshToken string) {
 	}
 }
 
+// Update the user's device token
+func SetDeviceToken(deviceToken string, user *models.User) {
+	update := bson.M{
+		"$set": bson.M{
+			"DeviceToken": deviceToken,
+		},
+	}
+	if err := models.UserModel.FindByIdAndUpdate(user.Id.Hex(), update, user); err != nil {
+		log.Println(err)
+		log.Fatal("Error updating user")
+	}
+}
+
 func CheckLogin(email string, password string) (models.User, bool) {
 	user := models.User{}
 	if err := models.UserModel.GetUserByEmail(email, &user); err != nil {
@@ -123,5 +137,4 @@ func ApplyReferral(user models.User, referral string) interface{} {
 	}
 
 	return "Referral Applied"
-
 }
