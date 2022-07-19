@@ -1,10 +1,14 @@
 package users
 
 // Get all waitlisted users. Mostly used by admins
-func GetWaitlist() {}
+func GetWaitlist() {
+	// TODO:
+}
 
 // Register a user to the waitlist
-func RegisterToWaitlist() {}
+func RegisterToWaitlist(name, email string) {
+	// TODO: Add the user to the waitlist
+}
 
 // Get the total waitlist queue count
 // Used to show the total number of users in the queue to a user

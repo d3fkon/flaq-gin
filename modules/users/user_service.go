@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/d3fkon/gin-flaq/models"
+	"github.com/d3fkon/gin-flaq/modules/rewards"
 	"github.com/d3fkon/gin-flaq/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,6 +26,7 @@ func GetUserByReferralCode(referralCode string) (models.User, error) {
 	return referralUser, nil
 }
 
+// Craete a n
 func CreateUser(data CreateUserBody) (models.User, error) {
 	passwordHash, e := utils.HashPassword(data.Password)
 	if e != nil {
@@ -98,6 +100,7 @@ func SetDeviceToken(deviceToken string, user *models.User) {
 	}
 }
 
+// Check if a given email and password can be logged in or not
 func CheckLogin(email string, password string) (models.User, bool) {
 	user := models.User{}
 	if err := models.UserModel.GetUserByEmail(email, &user); err != nil {
@@ -137,4 +140,17 @@ func ApplyReferral(user models.User, referral string) interface{} {
 	}
 
 	return "Referral Applied"
+}
+
+type flaqUser struct {
+	models.User
+	TotalEarningsINR float64 `json:"TotalEarningsINR"`
+}
+
+func GetProfile(user *models.User) *flaqUser {
+	total := rewards.GetTotalRewardAmountINR(user)
+	return &flaqUser{
+		*user,
+		total,
+	}
 }

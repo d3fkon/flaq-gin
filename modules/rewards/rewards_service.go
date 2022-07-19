@@ -80,6 +80,16 @@ func GetAllRewards(user *models.User) []rewardWithTicker {
 	return modifiedRewards
 }
 
+// A helper function to retrieve the user's total rewards earned till date
+func GetTotalRewardAmountINR(user *models.User) float64 {
+	total := 0.0
+	rewards := GetAllRewards(user)
+	for _, reward := range rewards {
+		total += reward.Amount * reward.Conversion
+	}
+	return total
+}
+
 // Claim rewards from the user's wallet
 // This requires a smart contract call to transfer funds
 func ClaimRewards(user *models.User) {

@@ -54,5 +54,6 @@ func (c Controller) ApplyReferral(ctx *gin.Context) {
 // @Produce  json
 func (c Controller) GetProfile(ctx *gin.Context) {
 	user := c.ReqUser(ctx)
-	c.HandleResponse(ctx, user)
+	res := GetProfile(&user)
+	c.HandleResponse(ctx, res)
 }
