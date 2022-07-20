@@ -156,7 +156,7 @@ func GetQuizTemplateForCampaign(campaignId string) *models.QuizTemplate {
 	if err := models.CampaignModel.FindManyPopulate(query, populate, &campaigns); err != nil {
 		utils.Panic(400, "[1] Campaign Not Found", err)
 	}
-	if len(campaigns) > 0 && len(*&campaigns[0].Quizzes.Ids) > 0 {
+	if len(campaigns) > 0 && len(campaigns[0].Quizzes.Ids) > 0 {
 		quizzes := campaigns[0].Quizzes
 		return &(*quizzes.Data)[0]
 	}

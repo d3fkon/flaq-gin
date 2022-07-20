@@ -53,6 +53,8 @@ definitions:
         type: string
       FlaqReward:
         type: integer
+      Image:
+        type: string
       RequiredFlaq:
         type: integer
       TickerImgUrl:
@@ -70,6 +72,7 @@ definitions:
     - ArticleUrls
     - CurrentAirdrop
     - FlaqReward
+    - Image
     - RequiredFlaq
     - TickerImgUrl
     - TickerName

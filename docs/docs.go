@@ -504,6 +504,7 @@ const docTemplate = `{
                 "ArticleUrls",
                 "CurrentAirdrop",
                 "FlaqReward",
+                "Image",
                 "RequiredFlaq",
                 "TickerImgUrl",
                 "TickerName",
@@ -528,6 +529,9 @@ const docTemplate = `{
                 },
                 "FlaqReward": {
                     "type": "integer"
+                },
+                "Image": {
+                    "type": "string"
                 },
                 "RequiredFlaq": {
                     "type": "integer"

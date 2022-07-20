@@ -499,6 +499,7 @@
                 "ArticleUrls",
                 "CurrentAirdrop",
                 "FlaqReward",
+                "Image",
                 "RequiredFlaq",
                 "TickerImgUrl",
                 "TickerName",
@@ -523,6 +524,9 @@
                 },
                 "FlaqReward": {
                     "type": "integer"
+                },
+                "Image": {
+                    "type": "string"
                 },
                 "RequiredFlaq": {
                     "type": "integer"
