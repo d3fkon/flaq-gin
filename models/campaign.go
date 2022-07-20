@@ -29,6 +29,7 @@ type Campaign struct {
 	TaskType       string             `bson:"TaskType" json:"TaskType"`
 	ArticleUrls    []string           `bson:"ArticleUrls" json:"ArticleUrls"`
 	YTVideoUrl     string             `bson:"YTVideoUrl" json:"YTVideoUrl"`
+	Image          string             `bson:"Image" json:"Image"`
 }
 
 type CampaignWrapper struct {

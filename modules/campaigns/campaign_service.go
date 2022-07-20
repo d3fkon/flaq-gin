@@ -35,6 +35,7 @@ func CreateCampaign(data *campaignBody) models.Campaign {
 		Id:             primitive.NewObjectID(),
 		YTVideoUrl:     data.YTVideoUrl,
 		ArticleUrls:    data.ArticleUrls,
+		Image:          data.Image,
 	}
 
 	if err := models.CampaignModel.New(campaign); err != nil {
