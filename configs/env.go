@@ -24,7 +24,7 @@ var envs = [...]string{
 
 func GetEnv(env EnvVar) string {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading env - ", string(env), err)
+		// log.Println("Error loading env - ", string(env), err)
 	}
 	envValues := map[string]string{}
 	for _, env := range envs {
