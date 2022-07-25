@@ -25,6 +25,8 @@ go.work
 /vendor/
 /Godeps/
 
+bin/
+
 .env
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
