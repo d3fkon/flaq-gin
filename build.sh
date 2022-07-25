@@ -6,5 +6,7 @@ set -xe
 # FOR EXAMPLE:
 go mod tidy
 
+swag init
+
 # create the application binary that eb uses
 go build -o bin/app -ldflags="-s -w"
