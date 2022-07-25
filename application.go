@@ -63,7 +63,7 @@ func main() {
 	setupRouter(r)
 
 	// Listen and Server in 0.0.0.0:8080
-	fmt.Println("Running on http://0.0.0.0:8080")
+	fmt.Println("Running on http://0.0.0.0:5000")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Run(":8080")
+	r.Run(":5000")
 }
