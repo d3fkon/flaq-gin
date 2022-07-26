@@ -37,18 +37,18 @@ func Setup(g *gin.Engine) {
 }
 
 type campaignBody struct {
-	Title          string   `json:"Title"`
-	Description    string   `json:"Description"`
-	TickerName     string   `json:"TickerName" binding:"required"`
-	TickerImgUrl   string   `json:"TickerImgUrl" binding:"required"`
-	RequiredFlaq   int      `json:"RequiredFlaq" binding:"required"`
-	FlaqReward     int      `json:"FlaqReward" binding:"required"`
-	AirdropPerUser float64  `json:"AirdropPerUser" binding:"required"`
-	TotalAirdrop   float64  `json:"TotalAirdrop" binding:"required"`
-	CurrentAirdrop float64  `json:"CurrentAirdrop" binding:"required"`
-	YTVideoUrl     string   `json:"YTVideoUrl" binding:"required"`
-	ArticleUrls    []string `json:"ArticleUrls" binding:"required"`
-	Image          string   `json:"Image" binding:"required"`
+	Title          string           `json:"Title"`
+	Description    string           `json:"Description"`
+	TickerName     string           `json:"TickerName" binding:"required"`
+	TickerImgUrl   string           `json:"TickerImgUrl" binding:"required"`
+	RequiredFlaq   int              `json:"RequiredFlaq" binding:"required"`
+	FlaqReward     int              `json:"FlaqReward" binding:"required"`
+	AirdropPerUser float64          `json:"AirdropPerUser" binding:"required"`
+	TotalAirdrop   float64          `json:"TotalAirdrop" binding:"required"`
+	CurrentAirdrop float64          `json:"CurrentAirdrop" binding:"required"`
+	YTVideoUrl     string           `json:"YTVideoUrl" binding:"required"`
+	Articles       []models.Article `json:"Articles" binding:"Articles"`
+	Image          string           `json:"Image" binding:"required"`
 }
 
 // Create a campaign

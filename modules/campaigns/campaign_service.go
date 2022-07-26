@@ -34,7 +34,7 @@ func CreateCampaign(data *campaignBody) models.Campaign {
 		RequiredFlaq:   data.RequiredFlaq,
 		Id:             primitive.NewObjectID(),
 		YTVideoUrl:     data.YTVideoUrl,
-		ArticleUrls:    data.ArticleUrls,
+		Articles:       data.Articles,
 		Image:          data.Image,
 	}
 

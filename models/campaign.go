@@ -13,6 +13,12 @@ var TaskTypes taskTypes = taskTypes{
 	QUIZ: "QUIZ",
 }
 
+type Article struct {
+	Url     string `bson:"Url" json:"Url"`
+	Title   string `bson:"Title" json:"Title"`
+	IconUrl string `bson:"IconUrl" json:"IconUrl"`
+}
+
 type Campaign struct {
 	Id             primitive.ObjectID `bson:"_id" json:"Id"`
 	Quizzes        QuizSliceWrapper   `bson:"Quizzes" json:"Quizzes"`
@@ -27,7 +33,7 @@ type Campaign struct {
 	CurrentAirdrop float64            `bson:"CurrentAirdrop" json:"CurrentAirdrop" binding:"required"`
 	CreatedAt      primitive.DateTime `bson:"CreatedAt" json:"-"`
 	TaskType       string             `bson:"TaskType" json:"TaskType"`
-	ArticleUrls    []string           `bson:"ArticleUrls" json:"ArticleUrls"`
+	Articles       []Article          `bson:"Articles" json:"Articles"`
 	YTVideoUrl     string             `bson:"YTVideoUrl" json:"YTVideoUrl"`
 	Image          string             `bson:"Image" json:"Image"`
 }
