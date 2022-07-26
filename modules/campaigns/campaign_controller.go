@@ -47,7 +47,7 @@ type campaignBody struct {
 	TotalAirdrop   float64          `json:"TotalAirdrop" binding:"required"`
 	CurrentAirdrop float64          `json:"CurrentAirdrop" binding:"required"`
 	YTVideoUrl     string           `json:"YTVideoUrl" binding:"required"`
-	Articles       []models.Article `json:"Articles" binding:"Articles"`
+	Articles       []models.Article `json:"Articles" binding:"required"`
 	Image          string           `json:"Image" binding:"required"`
 }
 
