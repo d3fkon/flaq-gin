@@ -1,7 +1,7 @@
 {
     "schemes": [
-        "http,",
-        "https"
+        "https",
+        "http"
     ],
     "swagger": "2.0",
     "info": {
@@ -497,7 +497,6 @@
             "type": "object",
             "required": [
                 "AirdropPerUser",
-                "ArticleUrls",
                 "CurrentAirdrop",
                 "FlaqReward",
                 "Image",
@@ -511,10 +510,10 @@
                 "AirdropPerUser": {
                     "type": "number"
                 },
-                "ArticleUrls": {
+                "Articles": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.Article"
                     }
                 },
                 "CurrentAirdrop": {
@@ -575,6 +574,20 @@
                     "type": "string"
                 },
                 "QuizTemplateId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Article": {
+            "type": "object",
+            "properties": {
+                "IconUrl": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Url": {
                     "type": "string"
                 }
             }

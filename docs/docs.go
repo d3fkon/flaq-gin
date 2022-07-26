@@ -501,7 +501,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "AirdropPerUser",
-                "ArticleUrls",
                 "CurrentAirdrop",
                 "FlaqReward",
                 "Image",
@@ -515,10 +514,10 @@ const docTemplate = `{
                 "AirdropPerUser": {
                     "type": "number"
                 },
-                "ArticleUrls": {
+                "Articles": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.Article"
                     }
                 },
                 "CurrentAirdrop": {
@@ -579,6 +578,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "QuizTemplateId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Article": {
+            "type": "object",
+            "properties": {
+                "IconUrl": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Url": {
                     "type": "string"
                 }
             }
@@ -660,7 +673,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "2.0",
 	Host:             "",
 	BasePath:         "/",
-	Schemes:          []string{"http,", "https"},
+	Schemes:          []string{"https", "http"},
 	Title:            "Flaq API",
 	Description:      "This is a sample server server.",
 	InfoInstanceName: "swagger",
