@@ -54,7 +54,7 @@ func setupRouter(r *gin.Engine) {
 // @license.name    Apache 2.0
 // @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
 // @BasePath        /
-// @schemes         http
+// @schemes         https http
 func main() {
 	r := gin.Default()
 	r.Use(gin.CustomRecovery(utils.HandleRecovery))
@@ -63,7 +63,7 @@ func main() {
 	setupRouter(r)
 
 	// Listen and Server in 0.0.0.0:8080
-	fmt.Println("Running on http://0.0.0.0:5000")
+	fmt.Println("Running on http://0.0.0.0:8080")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Run(":5000")
+	r.Run(":8080")
 }

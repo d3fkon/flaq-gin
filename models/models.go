@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Models home
 const (
 	Users                  = "users"
 	Payments               = "payments"

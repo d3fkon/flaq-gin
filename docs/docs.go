@@ -660,7 +660,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "2.0",
 	Host:             "",
 	BasePath:         "/",
-	Schemes:          []string{"http"},
+	Schemes:          []string{"http,", "https"},
 	Title:            "Flaq API",
 	Description:      "This is a sample server server.",
 	InfoInstanceName: "swagger",
